@@ -56,8 +56,8 @@ class OrderCreateView(generics.CreateAPIView):
         
         address = get_object_or_404(Address, id=address_id, user=request.user)
         
-        cart_items = CartItem.objects.filter(buyer=request.user)
-        if not cart_items.exists():
+        cart_items = request.data.get('items', [])
+        if not cart_items or len(cart_items) == 0:
             return Response({"error": "Sepetiniz boş."}, status=status.HTTP_400_BAD_REQUEST)
         
         order = Order.objects.create(buyer=request.user, address=address)
@@ -65,11 +65,9 @@ class OrderCreateView(generics.CreateAPIView):
         for item in cart_items:
             OrderItem.objects.create(
                 order=order,
-                product=item.product,
-                quantity=item.quantity
+                product_id=item.get('product'),
+                quantity=item.get('quantity', 1)
             )
-        
-        cart_items.delete()
         
         serializer = OrderSerializer(order)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
