@@ -1,9 +1,10 @@
 import React from 'react'
+import Form from '../components/AuthForm'
 
 function Kayit() {
     return (
         <div>
-            <h1>Kayit</h1>
+            <Form method="kayit" />
         </div>
     )
 }

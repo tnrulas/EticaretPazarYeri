@@ -1,9 +1,12 @@
 import React from 'react'
+import ProductList from '../components/ProductList'
+import Navbar from '../components/Navbar'
 
 function Anasayfa() {
     return (
         <div>
-            <h1>Anasayfa</h1>
+            <Navbar />
+            <ProductList />
         </div>
     )
 }

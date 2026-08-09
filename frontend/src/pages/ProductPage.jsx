@@ -1,9 +1,12 @@
 import React from 'react'
+import UrunDetay from '../components/ProductDetail'
+import Navbar from '../components/Navbar'
 
 function UrunSayfasi() {
     return (
         <div>
-            <h1>UrunSayfasi</h1>
+            <Navbar />
+            <UrunDetay />
         </div>
     )
 }

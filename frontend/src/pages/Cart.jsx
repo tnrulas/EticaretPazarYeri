@@ -1,9 +1,12 @@
 import React from 'react'
+import SepetListesi from '../components/CartList'
+import Navbar from '../components/Navbar'
 
 function Sepet() {
     return (
         <div>
-            <h1>Sepet</h1>
+            <Navbar />
+            <SepetListesi />
         </div>
     )
 }

@@ -1,9 +1,12 @@
 import React from 'react'
+import OrderForm from '../components/OrderForm'
+import Navbar from '../components/Navbar'
 
 function Odeme() {
     return (
         <div>
-            <h1>Odeme</h1>
+            <Navbar />
+            <OrderForm />
         </div>
     )
 }

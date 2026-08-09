@@ -6,7 +6,7 @@ import api from '../services/api'
 import { useDispatch } from 'react-redux'
 import { addToCart } from '../store/CartSlice'
 
-function ProductDetail() {
+function UrunDetay() {
     const { id } = useParams()
     const [product, setProduct] = useState(null)
 
@@ -47,3 +47,5 @@ function ProductDetail() {
         </div>
     )
 }
+
+export default UrunDetay

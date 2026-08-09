@@ -1,9 +1,10 @@
 import React from 'react'
+import Form from '../components/AuthForm'
 
 function Giris() {
     return (
         <div>
-            <h1>Giris</h1>
+            <Form method="login" />
         </div>
     )
 }
