@@ -11,7 +11,7 @@ function ProductList() {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await api.get('Urunliste/')
+                const response = await api.get('urunler/Urunliste/')
                 setProducts(response.data)
             } catch (error) {
                 console.error("Ürünler çekilirken hata oluştu:", error)
