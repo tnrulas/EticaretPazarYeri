@@ -28,13 +28,13 @@ function Form({ method }) {
             let payload = {};
 
             if (method === 'login') {
-                url = 'auth/giris/'
+                url = 'accounts/auth/giris/'
                 payload = { username, password }
             } else if (method === 'kayit' && kayitTipi === 'bireysel') {
-                url = 'auth/kayit/musteri'
+                url = 'accounts/auth/kayit/musteri'
                 payload = { username, email, password }
             } else if (method === 'kayit' && kayitTipi === 'kurumsal') {
-                url = 'auth/kayit/satici'
+                url = 'accounts/auth/kayit/satici'
                 payload = {
                     username,
                     email,
@@ -53,10 +53,13 @@ function Form({ method }) {
             if (method === 'login') {
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
+                localStorage.setItem('is_seller', res.data.is_seller);
+                localStorage.setItem('username', res.data.username);
+                window.location.href = "/";
 
-                navigate("/Anasayfa")
+                navigate("/")
             } else {
-                navigate('/Giris')
+                navigate('/giris')
             }
 
         } catch (error) {

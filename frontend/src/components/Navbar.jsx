@@ -16,7 +16,7 @@ function Navbar() {
                 <span onClick={() => navigate('/sepet')}>Sepetim</span>
                 {isSeller && (
                     <span
-                        onClick={() => navigate('/ekle')}
+                        onClick={() => navigate('/urunOlustur')}
                     >
                         Ürün Ekle
                     </span>

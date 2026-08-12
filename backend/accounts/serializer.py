@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import CustomUser
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class CreateCustomSellerUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,3 +43,14 @@ class CreateCustomBuyerUserSerializer(serializers.ModelSerializer):
         validated_data['is_buyer'] = True
         user = CustomUser.objects.create_user(**validated_data)
         return user
+
+class CustomTokenSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        
+        data = super().validate(attrs)
+        
+        data['is_seller'] = self.user.is_seller
+        data['is_buyer'] = self.user.is_buyer
+        data['username'] = self.user.username
+        
+        return data

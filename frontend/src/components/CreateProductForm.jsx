@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import api from '../services/api';
 
 function UrunOlustur() {
+    const navigate = useNavigate();
 
     const [urunIsmi, setUrunIsmi] = useState('');
     const [urunAciklamasi, setUrunAciklamasi] = useState('');
@@ -14,7 +15,7 @@ function UrunOlustur() {
         e.preventDefault();
 
         try {
-            const is_seller = localStorage.getItem('is_seller');
+            const isSeller = localStorage.getItem('is_seller');
             if (is_seller !== 'true') {
                 alert('Ürün oluşturmak için satıcı olmanız gerekmektedir.');
                 return;
@@ -35,6 +36,8 @@ function UrunOlustur() {
                 }
             });
             alert('Ürün başarı ile oluşturuldu!');
+
+            navigate("/")
 
         } catch (error) {
             console.error("Ürün oluşturulurken hata oluştu.", error);

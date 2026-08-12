@@ -28,7 +28,7 @@ function ProductList() {
                 {products.map((product) => {
                     return (
                         <li key={product.id}>
-                            <image src={product.photo}
+                            <img src={product.photo}
                                 alt={product.name} />
                             <h2>{product.name}</h2>
                             <p>{product.description}</p>
