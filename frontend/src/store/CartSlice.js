@@ -17,7 +17,7 @@ const cartSlice = createSlice({
                 existingItem.quantity += 1;
             } else {
                 state.cartItems.push({
-                    product: ProductAdd,
+                    ...ProductAdd,
                     quantity: 1,
                     buyer: localStorage.getItem('username')
                 });

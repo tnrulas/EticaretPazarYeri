@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import api from '../services/api'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../services/constants'
 import { useNavigate } from "react-router-dom"
+import '../style/Form.css'
 
 
 function Form({ method }) {
@@ -69,63 +70,67 @@ function Form({ method }) {
     }
 
     return (
-        <div className='girisregisterform'>
-            <h2>{method === 'login' ? 'Giriş Yap' : 'Kayıt Ol'}</h2>
+        <div className="auth">
+            <div className="auth__card">
+                <p className="auth__eyebrow">
+                    {method === 'login' ? 'Tekrar hoş geldiniz' : 'Aramıza katılın'}
+                </p>
+                <h2 className="auth__title">{method === 'login' ? 'Giriş Yap' : 'Kayıt Ol'}</h2>
 
-            {method === 'kayit' && (
-                <div>
-                    <div>
-                        <input
-                            type='radio'
-                            id="bireysel"
-                            value='bireysel'
-                            checked={kayitTipi === 'bireysel'}
-                            onChange={(e) => setKayitTipi(e.target.value)} />
-                        <label htmlFor="bireysel">Bireysel Kayıt</label>
+                {method === 'kayit' && (
+                    <div className="auth__toggle" role="radiogroup" aria-label="Kayıt tipi">
+                        <label className={`auth__toggle-option ${kayitTipi === 'bireysel' ? 'is-active' : ''}`}>
+                            <input
+                                type='radio'
+                                id="bireysel"
+                                value='bireysel'
+                                checked={kayitTipi === 'bireysel'}
+                                onChange={(e) => setKayitTipi(e.target.value)} />
+                            Bireysel Kayıt
+                        </label>
+                        <label className={`auth__toggle-option ${kayitTipi === 'kurumsal' ? 'is-active' : ''}`}>
+                            <input
+                                type='radio'
+                                id="kurumsal"
+                                value='kurumsal'
+                                checked={kayitTipi === 'kurumsal'}
+                                onChange={(e) => setKayitTipi(e.target.value)} />
+                            Kurumsal Üyelik
+                        </label>
                     </div>
-                    <div>
-                        <input
-                            type='radio'
-                            id="kurumsal"
-                            value='kurumsal'
-                            checked={kayitTipi === 'kurumsal'}
-                            onChange={(e) => setKayitTipi(e.target.value)} />
-                        <label htmlFor="kurumsal">Kurumsal Üyelik</label>
-                    </div>
-                </div>
-            )}
-            <form onSubmit={handleSubmit}>
-                {method === 'login' && (
-                    <>
-                        <input type="text" placeholder="Kullanıcı Adı" value={username} onChange={(e) => setUsername(e.target.value)} required />
-                        <input type="password" placeholder="Şifre" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                    </>
                 )}
+                <form className="auth__form" onSubmit={handleSubmit}>
+                    {method === 'login' && (
+                        <>
+                            <input className="auth__input" type="text" placeholder="Kullanıcı Adı" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                            <input className="auth__input" type="password" placeholder="Şifre" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                        </>
+                    )}
 
-                {method === 'kayit' && kayitTipi === 'bireysel' && (
-                    <>
-                        <input type="text" placeholder="Kullanıcı Adı" value={username} onChange={(e) => setUsername(e.target.value)} required />
-                        <input type="email" placeholder="E-posta" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                        <input type="password" placeholder="Şifre" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                    </>
-                )}
+                    {method === 'kayit' && kayitTipi === 'bireysel' && (
+                        <>
+                            <input className="auth__input" type="text" placeholder="Kullanıcı Adı" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                            <input className="auth__input" type="email" placeholder="E-posta" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                            <input className="auth__input" type="password" placeholder="Şifre" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                        </>
+                    )}
 
-                {method === 'kayit' && kayitTipi == 'kurumsal' && (
-                    <>
-                        <input type="text" placeholder="Firma Adı" value={companyName} onChange={(e) => setCompanyName(e.target.value)} required />
-                        <input type="text" placeholder="Kullanıcı Adı" value={username} onChange={(e) => setUsername(e.target.value)} required />
-                        <input type="email" placeholder="E-posta" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                        <input type="text" placeholder="Firma Adresi" value={companyAddress} onChange={(e) => setCompanyAddress(e.target.value)} required />
-                        <input type="number" placeholder="Firma Telefonu" value={companyPhone} onChange={(e) => setCompanyPhone(e.target.value)} required />
-                        <input type="password" placeholder="Şifre" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                    </>
-                )}
+                    {method === 'kayit' && kayitTipi == 'kurumsal' && (
+                        <>
+                            <input className="auth__input" type="text" placeholder="Firma Adı" value={companyName} onChange={(e) => setCompanyName(e.target.value)} required />
+                            <input className="auth__input" type="text" placeholder="Kullanıcı Adı" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                            <input className="auth__input" type="email" placeholder="E-posta" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                            <input className="auth__input" type="text" placeholder="Firma Adresi" value={companyAddress} onChange={(e) => setCompanyAddress(e.target.value)} required />
+                            <input className="auth__input" type="number" placeholder="Firma Telefonu" value={companyPhone} onChange={(e) => setCompanyPhone(e.target.value)} required />
+                            <input className="auth__input" type="password" placeholder="Şifre" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                        </>
+                    )}
 
-                <button type="submit" style={{ marginTop: '15px' }}>
-                    {method === 'login' ? 'Giriş Yap' : 'Kayıt Ol'}
-                </button>
-            </form>
-
+                    <button type="submit" className="auth__submit">
+                        {method === 'login' ? 'Giriş Yap' : 'Kayıt Ol'}
+                    </button>
+                </form>
+            </div>
         </div>
     )
 }

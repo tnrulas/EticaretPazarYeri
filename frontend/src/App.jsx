@@ -46,7 +46,7 @@ function App() {
           }
         />
         <Route
-          path='/urunSayfasi'
+          path='/urunSayfasi/:id'
           element={
             <UrunSayfasi />
           }

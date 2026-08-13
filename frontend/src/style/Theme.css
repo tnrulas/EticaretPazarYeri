@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root {
+    /* --- Palette --- */
+    --color-bg: #F5F6F1;
+    /* page background — soft paper */
+    --color-surface: #FFFFFF;
+    /* cards / inputs */
+    --color-ink: #16202A;
+    /* primary text */
+    --color-ink-soft: #5B6874;
+    /* secondary text */
+    --color-ink-faint: #8B96A0;
+    /* tertiary / labels */
+
+    --color-primary: #0F5C5C;
+    /* deep teal — brand, links, buyer actions */
+    --color-primary-dark: #0A4444;
+    --color-primary-soft: #E4EEEC;
+
+    --color-accent: #E8A33D;
+    /* marigold — primary CTAs, price highlights */
+    --color-accent-dark: #C9862A;
+
+    --color-stamp: #B23A48;
+    /* brick red — seller / kurumsal badges */
+    --color-stamp-soft: #F6E3E0;
+
+    --color-line: #DDD7C8;
+    /* hairline borders */
+
+    /* --- Type --- */
+    --font-display: 'Fraunces', Georgia, serif;
+    /* headings */
+    --font-body: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    /* everything else */
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+    /* prices, quantities — "receipt" numbers */
+
+    /* --- Shape / shadow --- */
+    --radius-sm: 3px;
+    --radius-md: 8px;
+    --notch: 20px;
+    /* size of the cut "ticket" corner used on cards */
+    --shadow-card: 0 1px 2px rgba(22, 32, 42, 0.06), 0 6px 16px rgba(22, 32, 42, 0.06);
+    --shadow-lift: 0 10px 28px rgba(22, 32, 42, 0.14);
+}
+
+body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+}

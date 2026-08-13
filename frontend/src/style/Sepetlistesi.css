@@ -1,0 +1,122 @@
+.cart {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+}
+
+.cart__header {
+    margin-bottom: 24px;
+}
+
+.cart__eyebrow {
+    margin: 0 0 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+}
+
+.cart__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--color-ink);
+}
+
+.cart__empty {
+    color: var(--color-ink-soft);
+    padding: 32px 0;
+}
+
+.cart__list {
+    list-style: none;
+    margin: 0 0 28px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    padding: 14px 20px;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+}
+
+.cart-item__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.cart-item__name {
+    font-weight: 600;
+    color: var(--color-ink);
+}
+
+.cart-item__qty {
+    font-size: 0.8rem;
+    color: var(--color-ink-faint);
+}
+
+.cart-item__price {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--color-primary-dark);
+}
+
+.cart__summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 18px 20px;
+    background: var(--color-ink);
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+}
+
+.cart__summary-label {
+    color: #cfd6da;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.cart__summary-total {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.cart__checkout {
+    width: 100%;
+    padding: 15px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 1rem;
+    color: #fff;
+    background: var(--color-accent);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.cart__checkout:hover:not(:disabled) {
+    background: var(--color-accent-dark);
+}
+
+.cart__checkout:disabled {
+    background: var(--color-line);
+    color: var(--color-ink-faint);
+    cursor: not-allowed;
+}
