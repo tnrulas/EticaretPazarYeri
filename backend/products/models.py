@@ -15,3 +15,11 @@ class Product(models.Model):
     
     def __str__(self):
         return f"{self.name} - {self.seller.username}"
+
+class Review(models.Model):
+    user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, related_name='reviewer')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='urun')
+    is_buyed = models.BooleanField(default=False)
+    message = models.TextField(blank=True, null=True)
+    rating = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)

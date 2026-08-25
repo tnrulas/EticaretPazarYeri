@@ -27,3 +27,4 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey('products.Product', on_delete=models.SET_NULL, null=True)
     quantity = models.IntegerField()
+    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)

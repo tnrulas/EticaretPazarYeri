@@ -9,6 +9,7 @@ import UrunOlusturSayfasi from '../src/pages/ProductCreatePage'
 import UrunSayfasi from '../src/pages/ProductPage'
 import Kayit from '../src/pages/Register'
 import ProtectedRoute from '../src/components/ProtectedRoute'
+import SearchThings from '../src/pages/SearchPage'
 
 
 
@@ -73,6 +74,12 @@ function App() {
             <ProtectedRoute>
               <OdemeBasarili />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/search'
+          element={
+            <SearchThings />
           }
         />
       </Routes>

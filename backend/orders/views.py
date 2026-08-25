@@ -66,7 +66,8 @@ class OrderCreateView(generics.CreateAPIView):
             OrderItem.objects.create(
                 order=order,
                 product_id=item.get('product'),
-                quantity=item.get('quantity', 1)
+                quantity=item.get('quantity', 1),
+                address=address
             )
         
         serializer = OrderSerializer(order)

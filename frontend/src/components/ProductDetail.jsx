@@ -10,6 +10,7 @@ import '../style/Urundetay.css'
 function UrunDetay() {
     const { id } = useParams()
     const [product, setProduct] = useState(null)
+    const [message, setMessage] = useState(null)
 
     const dispatch = useDispatch();
 
@@ -24,6 +25,16 @@ function UrunDetay() {
         }
         fetchProduct();
     }, [id])
+
+    useEffect(() => {
+        const fetchReviews = async () => {
+
+        }
+    }, [])
+
+    const handleAddReview = () => {
+
+    }
 
     const handleAddToCart = () => {
         dispatch(addToCart(product));
@@ -63,6 +74,11 @@ function UrunDetay() {
                     </div>
                 </div>
             )}
+            <form>
+                <input
+                    type='text'
+                />
+            </form>
         </div>
     )
 }
