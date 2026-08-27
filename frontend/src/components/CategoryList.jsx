@@ -1,18 +1,22 @@
 import React from 'react'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import api from '../services/api'
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import '../style/Productlist.css'
+import api from '../services/api';
 
-
-function ProductList() {
+function CategoryLists() {
     const [products, setProducts] = useState([])
     const navigate = useNavigate();
+
+    const [searchParams] = useSearchParams();
+    const query = searchParams.get('category') || '';
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await api.get('urunler/Urunliste/')
+                const response = await api.get('urunler/kategori/', {
+                    params: { category: query }
+                })
                 setProducts(response.data)
             } catch (error) {
                 console.error("Ürünler çekilirken hata oluştu:", error)
@@ -20,11 +24,10 @@ function ProductList() {
         }
 
         fetchProducts();
-    }, [])
+    }, [query])
 
     return (
         <div className="catalog">
-
             <div className="catalog__header">
                 <p className="catalog__eyebrow">Pazar yeri</p>
                 <h1 className="catalog__title">Ürünler ve Hizmetler</h1>
@@ -68,4 +71,4 @@ function ProductList() {
     )
 }
 
-export default ProductList
+export default CategoryLists

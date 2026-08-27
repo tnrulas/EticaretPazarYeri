@@ -8,4 +8,5 @@ urlpatterns = [
     path('Urunekle/', ProductCreateView.as_view(), name='urun-ekle'),
     path('ara/', ProductSearchFilterView.as_view(), name='urun-ara'),
     path('Urunliste/<int:product_id>/yorumlar/', ProductReviewView.as_view(), name='urun-yorumlari'),
+    path('kategori/', ProductCategoryListView.as_view(), name='urun-kategori'),
 ]

@@ -5,6 +5,15 @@ import { useNavigate } from 'react-router-dom';
 import '../style/Urunolustur.css'
 
 function UrunOlustur() {
+
+    const categories = [
+        "Elektronik", "Moda & Giyim", "Ev, Mobilya & Yaşam", "Kozmetik & Kişisel Bakım",
+        "Anne, Bebek & Oyuncak", "Spor & Outdoor", "Süpermarket & Gıda", "Kitap, Müzik & Hobi",
+        "Otomobil & Motosiklet", "Evcil Hayvan Ürünleri", "Ofis & Kırtasiye", "Saat, Takı & Aksesuar",
+        "Ayakkabı & Çanta", "Yapı Market & Hırdavat", "Bahçe & Teras", "Oyun & Konsol",
+        "Sağlık & Medikal Ürünler", "Müzik Aletleri", "Sanat, Hobi & El İşi"
+    ];
+
     const navigate = useNavigate();
 
     const [urunIsmi, setUrunIsmi] = useState('');
@@ -12,6 +21,7 @@ function UrunOlustur() {
     const [urunResmi, setUrunResmi] = useState(null);
     const [urunFiyati, setUrunFiyati] = useState('');
     const [stokSayisi, setStokSayisi] = useState('');
+    const [kategori, setKategori] = useState('')
 
     const olustur = async (e) => {
         e.preventDefault();
@@ -27,6 +37,7 @@ function UrunOlustur() {
             formData.append('description', urunAciklamasi);
             formData.append('price', urunFiyati);
             formData.append('stock_count', stokSayisi);
+            formData.append('category', kategori);
 
             if (urunResmi) {
                 formData.append('photo', urunResmi);
@@ -55,6 +66,7 @@ function UrunOlustur() {
             setUrunResmi(null);
             setUrunFiyati('');
             setStokSayisi('');
+            setKategori('')
         }
     }
 
@@ -106,6 +118,23 @@ function UrunOlustur() {
                             accept="image/*"
                             onChange={(e) => setUrunResmi(e.target.files[0])}
                         />
+                    </div>
+
+                    <div className="product-form__field product-form__field--file">
+                        <label>Ürün kategorisi</label>
+                        <select
+                            value={kategori}
+                            onChange={(e) => setKategori(e.target.value)}
+                            required
+                            style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
+                        >
+                            <label>Lütfen bir kategori seçin</label>
+                            {categories.map((cat, index) => (
+                                <option key={index} value={cat}>
+                                    {cat}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                     <button type="submit" className="product-form__submit">Ürün Oluştur</button>
                 </form>

@@ -8,9 +8,12 @@ import { addToCart } from '../store/CartSlice'
 import '../style/Urundetay.css'
 
 function UrunDetay() {
-    const { id } = useParams()
-    const [product, setProduct] = useState(null)
-    const [message, setMessage] = useState(null)
+    const { id } = useParams();
+    const [product, setProduct] = useState(null);
+
+    const [reviews, setReviews] = useState([]);
+    const [newReviewText, setNewReviewText] = useState("");
+    const [rating, setRating] = useState(5);
 
     const dispatch = useDispatch();
 
@@ -28,12 +31,31 @@ function UrunDetay() {
 
     useEffect(() => {
         const fetchReviews = async () => {
-
+            try {
+                const response = await api.get(`urunler/Urunliste/${id}/yorumlar/`)
+                setReviews(response.data)
+            } catch (error) {
+                console.error("yorumlar çekilemedi", error)
+            }
         }
-    }, [])
+        fetchReviews();
+    }, [id])
 
-    const handleAddReview = () => {
+    const handleAddReview = async (e) => {
+        e.preventDefault();
 
+        try {
+            const response = await api.post(`urunler/Urunliste/${id}/yorumlar/`, {
+                message: newReviewText,
+                rating: parseInt(rating)
+            });
+            setReviews([response.data, ...reviews]);
+            setNewReviewText("")
+            alert("Yorumunuz başarı ile eklenmiştir")
+        } catch (error) {
+            console.error("yorum yapılamadı", error)
+            alert("Sadece bu ürünü satın alan kullanıcılar yorum yapabilir.");
+        }
     }
 
     const handleAddToCart = () => {
@@ -74,11 +96,55 @@ function UrunDetay() {
                     </div>
                 </div>
             )}
-            <form>
-                <input
-                    type='text'
-                />
-            </form>
+            <div>
+                <h3>Ürün yorumları ({reviews.length})</h3>
+                <form onSubmit={handleAddReview}>
+                    <div>
+                        <input
+                            type='text'
+                            value={newReviewText}
+                            onChange={(e) => setNewReviewText(e.target.value)}
+                            required
+                        />
+                        <select
+                            value={rating}
+                            onChange={(e) => setRating(e.target.value)}
+                            required
+                        >
+                            <option value={5}>5 Yıldız</option>
+                            <option value={4}>4 Yıldız</option>
+                            <option value={3}>3 Yıldız</option>
+                            <option value={2}>2 Yıldız</option>
+                            <option value={1}>1 Yıldız</option>
+                        </select>
+                        <button type='submit'>Gönder</button>
+                    </div>
+                </form>
+
+                <div>
+                    {reviews.length === 0 ? (
+                        <p>Bu ürüne henüz yorum yapılmamış</p>
+                    ) : (
+                        <ul>
+                            {reviews.map((review) => (
+                                <li key={review.id}>
+                                    <div>
+                                        <strong>{review.username}</strong>
+                                        <span>{review.username}</span>
+                                        {review.is_buyed && (
+                                            <span>
+                                                ✅ Ürünü Satın Aldı
+                                            </span>
+                                        )}
+                                    </div>
+                                    <p>{review.message}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            </div>
+
         </div>
     )
 }

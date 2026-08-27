@@ -26,6 +26,19 @@ class ProductListView(generics.ListAPIView):
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
     queryset = Product.objects.all()
+    
+class ProductCategoryListView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        searched_category = self.request.query_params.get('category')
+        
+        if searched_category:
+            
+            return Product.objects.filter(category=searched_category) 
+        
+        return Product.objects.all()
 
 class ProductSearchFilterView(generics.ListAPIView):
     serializer_class = ProductSerializer
@@ -38,7 +51,7 @@ class ProductSearchFilterView(generics.ListAPIView):
             
             return Product.objects.filter(name__icontains=searched_sentence) 
         
-        return Product.objects.none()
+        return Product.objects.none(category=searched_sentence)
 
 
 class ProductDetailView(generics.RetrieveAPIView):

@@ -12,6 +12,7 @@ class Product(models.Model):
     stock_count = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    category = models.CharField(blank=True, null=True, max_length=255)
     
     def __str__(self):
         return f"{self.name} - {self.seller.username}"
