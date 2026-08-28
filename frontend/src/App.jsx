@@ -84,7 +84,7 @@ function App() {
           }
         />
         <Route
-          path='/search'
+          path='/filter'
           element={
             <Categories />
           }

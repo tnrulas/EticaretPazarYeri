@@ -51,7 +51,7 @@ class ProductSearchFilterView(generics.ListAPIView):
             
             return Product.objects.filter(name__icontains=searched_sentence) 
         
-        return Product.objects.none(category=searched_sentence)
+        return Product.objects.none()
 
 
 class ProductDetailView(generics.RetrieveAPIView):

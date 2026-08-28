@@ -16,7 +16,7 @@ function Navbar() {
     const handleCategory = (category_name) => {
         setSelectedCategory(category_name);
         setBurgerOpen(false);
-        navigate(`/search?category=${encodeURIComponent(category_name)}`);
+        navigate(`/filter?category=${encodeURIComponent(category_name)}`);
     }
 
     const handleSearch = (e) => {

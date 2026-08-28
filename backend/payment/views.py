@@ -9,6 +9,7 @@ import uuid
 from django.db import transaction
 from orders.models import Order, OrderItem
 from rest_framework.views import APIView
+from django.db.models import F
 
 # Create your views here.
 
@@ -42,6 +43,13 @@ class PaymentCreateView(APIView):
         
         order.is_verified = True
         order.save()
+        
+        for item in order_items:
+            product = item.product
+            
+            product.stock_count = F('stock_count') - item.quantity
+            
+            product.save()
         
         serializer = PaymentSerializer(payment)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
