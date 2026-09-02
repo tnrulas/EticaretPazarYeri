@@ -42,7 +42,7 @@ class OrderListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        return Order.objects.filter(buyer=self.request.user)
+        return Order.objects.filter(buyer=self.request.user).order_by('-created_at')
 
 class OrderCreateView(generics.CreateAPIView):
     serializer_class = OrderSerializer

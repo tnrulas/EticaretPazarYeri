@@ -24,7 +24,7 @@ function SearchAll() {
         }
 
         fetchProducts();
-    }, [fetch])
+    }, [query])
 
     return (
         <div className="catalog">

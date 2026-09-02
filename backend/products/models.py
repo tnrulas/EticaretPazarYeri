@@ -17,6 +17,13 @@ class Product(models.Model):
     def __str__(self):
         return f"{self.name} - {self.seller.username}"
 
+class ImageProduct(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='product_photos/')
+    
+    def __str__(self):
+        return f"{self.product.name} - Galeri Görseli"
+
 class Review(models.Model):
     user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, related_name='reviewer')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='urun')

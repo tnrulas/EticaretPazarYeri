@@ -22,6 +22,7 @@ function UrunOlustur() {
     const [urunFiyati, setUrunFiyati] = useState('');
     const [stokSayisi, setStokSayisi] = useState('');
     const [kategori, setKategori] = useState('')
+    const [ekstraResim, setEkstraResim] = useState([])
 
     const olustur = async (e) => {
         e.preventDefault();
@@ -41,6 +42,12 @@ function UrunOlustur() {
 
             if (urunResmi) {
                 formData.append('photo', urunResmi);
+            }
+
+            if (ekstraResim) {
+                for (let resim of ekstraResim) {
+                    formData.append('images', resim)
+                }
             }
 
             const res = await api.post('urunler/Urunekle/', formData, {
@@ -67,6 +74,7 @@ function UrunOlustur() {
             setUrunFiyati('');
             setStokSayisi('');
             setKategori('')
+            setEkstraResim([]);
         }
     }
 
@@ -112,11 +120,21 @@ function UrunOlustur() {
                     </div>
 
                     <div className="product-form__field product-form__field--file">
-                        <label>Ürün Resmi</label>
+                        <label>Ürün Kapak Resmi</label>
                         <input
                             type="file"
                             accept="image/*"
                             onChange={(e) => setUrunResmi(e.target.files[0])}
+                        />
+                    </div>
+
+                    <div className="product-form__field product-form__field--file">
+                        <label>Ürün diğer resimleri (Birden fazla seçebilirsiniz)</label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={(e) => setEkstraResim(Array.from(e.target.files))}
                         />
                     </div>
 
@@ -128,7 +146,7 @@ function UrunOlustur() {
                             required
                             style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
                         >
-                            <label>Lütfen bir kategori seçin</label>
+                            <option value="" disabled>Lütfen bir kategori seçin</option>
                             {categories.map((cat, index) => (
                                 <option key={index} value={cat}>
                                     {cat}

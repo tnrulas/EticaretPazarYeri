@@ -7,6 +7,7 @@ import '../style/Productlist.css'
 
 function ProductList() {
     const [products, setProducts] = useState([])
+    const [productImage, setProductImage] = useState([])
     const navigate = useNavigate();
 
     useEffect(() => {

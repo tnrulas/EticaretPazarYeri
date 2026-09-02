@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions, status
 
 from accounts.models import CustomUser
-from .models import Product, Review
+from .models import Product, Review, ImageProduct
 from .serializer import ProductSerializer, ProductReviewSerializer
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
@@ -20,7 +20,12 @@ class ProductCreateView(generics.CreateAPIView):
         if not self.request.user.is_seller:
             raise PermissionDenied("Only sellers can create products.")
         
-        serializer.save(seller=self.request.user)
+        product = serializer.save(seller=self.request.user)
+        
+        ekstra_resimler = self.request.FILES.getlist('images')
+        
+        for resim in ekstra_resimler:
+            ImageProduct.objects.create(image=resim, product=product)
 
 class ProductListView(generics.ListAPIView):
     serializer_class = ProductSerializer
@@ -58,6 +63,17 @@ class ProductDetailView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
+
+class SellerProductListView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        
+        satici_id = self.kwargs.get('seller_id')
+        
+        return Product.objects.filter(seller=satici_id)
+    
 
 
 class ProductReviewView(generics.ListCreateAPIView):

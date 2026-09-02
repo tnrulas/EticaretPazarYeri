@@ -14,9 +14,15 @@ class ShowCartItemSerializer(serializers.ModelSerializer):
         read_only_fields = ['buyer']
 
 class OrderItemSerializer(serializers.ModelSerializer):
+    
+    product_name = serializers.CharField(source='product.name', read_only=True)
+    product_photo = serializers.ImageField(source='product.photo', read_only=True)
+    product_price = serializers.DecimalField(source='product.price', max_digits=10, decimal_places=2, read_only=True)
+
     class Meta:
         model = OrderItem
-        fields = ['id', 'product', 'quantity', 'address']
+        # Yeni eklediğimiz alanları fields listesine mutlaka yazıyoruz
+        fields = ['id', 'product', 'product_name', 'product_photo', 'product_price', 'quantity', 'address']
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)

@@ -60,3 +60,9 @@ class ListMyAccountSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['id', 'username']
         extra_kwargs = {'username':{'read_only':True}}
+
+class ListSellerAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'company_name', 'company_address', 'company_phone']
+        read_only_fields = ['username', 'company_name', 'company_address', 'company_phone']

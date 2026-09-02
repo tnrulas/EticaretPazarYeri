@@ -9,4 +9,5 @@ urlpatterns = [
     path('ara/', ProductSearchFilterView.as_view(), name='urun-ara'),
     path('Urunliste/<int:product_id>/yorumlar/', ProductReviewView.as_view(), name='urun-yorumlari'),
     path('kategori/', ProductCategoryListView.as_view(), name='urun-kategori'),
+    path('satici/<int:seller_id>/', SellerProductListView.as_view())
 ]

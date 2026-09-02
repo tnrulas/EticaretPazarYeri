@@ -8,4 +8,6 @@ urlpatterns = [
     path('auth/kayit/musteri', CreateCustomBuyerUserView.as_view(), name='kullanici-musteri-kayit'),
     path('auth/giris/', CustomLoginView.as_view(), name='kullanici-giris'),
     path('auth/yenile/', TokenRefreshView.as_view(), name='token-yenile'),
+    path('listele/', ListMyAccountView.as_view(), name='profilim'),
+    path('satici/<int:seller_id>/', ListSellerAccountView.as_view(), name='saticiP')
 ]

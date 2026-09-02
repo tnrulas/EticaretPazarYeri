@@ -11,6 +11,8 @@ import Kayit from '../src/pages/Register'
 import ProtectedRoute from '../src/components/ProtectedRoute'
 import SearchThings from '../src/pages/SearchPage'
 import Categories from '../src/pages/CategoryPage'
+import Order from '../src/pages/OrdersPage'
+import SellerP from '../src/pages/SellerProfilePage'
 
 
 
@@ -87,6 +89,18 @@ function App() {
           path='/filter'
           element={
             <Categories />
+          }
+        />
+        <Route
+          path='/siparislerim'
+          element={
+            <Order />
+          }
+        />
+        <Route
+          path='/satici/:id'
+          element={
+            <SellerP />
           }
         />
       </Routes>

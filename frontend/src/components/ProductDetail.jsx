@@ -6,14 +6,18 @@ import api from '../services/api'
 import { useDispatch } from 'react-redux'
 import { addToCart } from '../store/CartSlice'
 import '../style/Urundetay.css'
+import { useNavigate } from 'react-router-dom';
 
 function UrunDetay() {
+    const navigate = useNavigate()
     const { id } = useParams();
     const [product, setProduct] = useState(null);
 
     const [reviews, setReviews] = useState([]);
     const [newReviewText, setNewReviewText] = useState("");
     const [rating, setRating] = useState(5);
+
+    const [activeImage, setActiveImage] = useState(null);
 
     const dispatch = useDispatch();
 
@@ -22,6 +26,7 @@ function UrunDetay() {
             try {
                 const response = await api.get(`urunler/Urunliste/${id}/`)
                 setProduct(response.data)
+                setActiveImage(response.data.photo)
             } catch (error) {
                 console.error("Ürün detayları çekilirken hata oluştu:", error)
             }
@@ -67,9 +72,43 @@ function UrunDetay() {
         <div className="product-detail">
             {product && (
                 <div className="product-detail__layout">
-                    <div className="product-detail__image-wrap">
-                        <img className="product-detail__image" src={product.photo} alt={product.name} />
+                    <div style={{ width: '100%' }}>
+                        <div style={{ width: '100%', height: '400px', border: '1px solid #ccc', borderRadius: '8px', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <img
+                                src={activeImage}
+                                alt={product.name}
+                                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                            />
+                        </div>
+                        <div style={{ display: 'flex', gap: '10px', marginTop: '15px', overflowX: 'auto' }}>
+
+                            <img
+                                src={product.photo}
+                                alt="Kapak"
+                                onClick={() => setActiveImage(product.photo)}
+                                style={{
+                                    width: '80px', height: '80px', cursor: 'pointer', objectFit: 'cover', borderRadius: '5px',
+                                    border: activeImage === product.photo ? '3px solid #007bff' : '1px solid #ddd'
+                                }}
+                            />
+
+
+                            {product.images && product.images.map((item) => (
+                                <img
+                                    key={item.id}
+                                    src={item.image}
+                                    alt="Ekstra"
+                                    onClick={() => setActiveImage(item.image)}
+                                    style={{
+                                        width: '80px', height: '80px', cursor: 'pointer', objectFit: 'cover', borderRadius: '5px',
+                                        border: activeImage === item.image ? '3px solid #007bff' : '1px solid #ddd'
+                                    }}
+                                />
+                            ))}
+                        </div>
+
                     </div>
+
                     <div className="product-detail__info">
                         <span className="product-detail__seller">Satıcı: {product.seller}</span>
                         <h2 className="product-detail__name">{product.name}</h2>
@@ -93,6 +132,16 @@ function UrunDetay() {
                         <button className="product-detail__cta" onClick={handleAddToCart}>
                             Sepete Ekle
                         </button>
+                        <h1>Satıcı:</h1>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => navigate(`/satici/${product.seller}`)}>
+                            <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#ccc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                👤
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{product.seller_name}</span>
+                                <span style={{ fontSize: '12px', color: 'gray' }}>Hesap Yok</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
