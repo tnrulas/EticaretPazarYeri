@@ -41,7 +41,7 @@ function Seller() {
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
 
-            {/* --------- SATICI PROFİL BANNER'I (YENİ EKLENEN KISIM) --------- */}
+
             {sellerProfile && (
                 <div style={{
                     backgroundColor: '#f8f9fa',
@@ -55,7 +55,7 @@ function Seller() {
                     boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
                 }}>
 
-                    {/* Profil Fotoğrafı (Şimdilik İkon veya İlk Harf) */}
+
                     <div style={{
                         width: '100px',
                         height: '100px',
@@ -72,7 +72,7 @@ function Seller() {
                         {sellerProfile.company_name ? sellerProfile.company_name.charAt(0).toUpperCase() : sellerProfile.username.charAt(0).toUpperCase()}
                     </div>
 
-                    {/* Satıcı Bilgileri */}
+
                     <div style={{ flex: '1' }}>
                         <h1 style={{ margin: '0 0 10px 0', fontSize: '28px', color: '#333' }}>
                             {sellerProfile.company_name || sellerProfile.username}
@@ -99,10 +99,10 @@ function Seller() {
                     </div>
                 </div>
             )}
-            {/* --------------------------------------------------------------- */}
 
 
-            {/* Ürünler Listesi (Senin Yazdığın Kısım) */}
+
+
             <h2 style={{ borderBottom: '2px solid #ff9900', paddingBottom: '10px', marginBottom: '20px' }}>Mağazanın Ürünleri</h2>
 
             <div className="catalog">
@@ -125,7 +125,7 @@ function Seller() {
                                         <h2 className="product-card__name">{product.name}</h2>
                                         <p className="product-card__description">{product.description}</p>
                                         <div className="product-card__meta">
-                                            {/* UFAK DÜZELTME: product.seller yerine product.seller_name kullanıyoruz */}
+
                                             <span className="product-card__seller">Satıcı: {product.seller_name || sellerProfile?.username}</span>
                                             <span className="product-card__stock">Stok: {product.stock_count}</span>
                                         </div>
