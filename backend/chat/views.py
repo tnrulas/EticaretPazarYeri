@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.db.models import Q
+from rest_framework.views import APIView
 
 
 # Create your views here.
@@ -28,7 +29,7 @@ class MesajlasmaAlaniOlusturView(generics.CreateAPIView):
         if request.user == satici:
             return Response({"error": "Kendinizle mesajlaşma alanı oluşturamazsınız."}, status=status.HTTP_400_BAD_REQUEST)
         
-        if satici.is_buyer == False:
+        if satici.is_seller == False:
             return Response({"error": "mesajlaşma alanı oluşabilmesi için alıcı ve satıcı olmalıdır."}, status=status.HTTP_400_BAD_REQUEST)
         
         oda, created = MesajlasmaAlani.objects.get_or_create(
@@ -102,3 +103,16 @@ class MesajListView(generics.ListAPIView):
             )
         
         return super().list(request, *args, **kwargs)
+
+class OdaKontrolView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, satici_id):
+        
+        oda = MesajlasmaAlani.objects.filter(alici=request.user, satici_id=satici_id).first()
+        
+        if oda:
+            serializer = MesajlasmaAlaniSerializer(oda)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        return Response({"detail": "Oda henüz yok"}, status=status.HTTP_404_NOT_FOUND)
