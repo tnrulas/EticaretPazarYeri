@@ -7,11 +7,14 @@ import { useDispatch } from 'react-redux'
 import { addToCart } from '../store/CartSlice'
 import '../style/Urundetay.css'
 import { useNavigate } from 'react-router-dom';
+import { ACCESS_TOKEN } from '../services/constants'
 
 function UrunDetay() {
     const navigate = useNavigate()
     const { id } = useParams();
     const [product, setProduct] = useState(null);
+    const [alici, setAlici] = useState(null)
+    const [satici, setSatici] = useState(null)
 
     const [reviews, setReviews] = useState([]);
     const [newReviewText, setNewReviewText] = useState("");
@@ -19,7 +22,56 @@ function UrunDetay() {
 
     const [activeImage, setActiveImage] = useState(null);
 
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const [mesajlar, setMesajlar] = useState([]);
+    const [yeniMesaj, setYeniMesaj] = useState("");
+    const [mesajlasmaAlaniId, setMesajlasmaAlaniId] = useState(null);
+    const [katilimcilar, setKatilimcilar] = useState([])
+
+    const isSeller = localStorage.getItem('is_seller') === 'true';
+
+    const [ws, setWs] = useState(null);
+
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    let myUserId = null;
+
+    if (token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            myUserId = String(payload.user_id);
+        } catch (error) {
+            console.error("Token çözümlenirken hata oluştu:", error);
+        }
+    }
+
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await api.get('accounts/listele/')
+                setAlici(response.data)
+            } catch (error) {
+                console.error("KUllanıcı çekilirken bir hata oluştu:", error)
+            }
+        }
+        fetchUser();
+    }, [])
+
+    useEffect(() => {
+        if (product && product.seller) {
+            const FetchSellerProfile = async () => {
+                try {
+                    const res = await api.get(`accounts/satici/${product.seller}/`);
+                    setSatici(res.data);
+                    console.log("Satıcının bilgileri:", res.data);
+                } catch (error) {
+                    console.error("Satıcı bilgileri çekilirken hata oluştu:", error);
+                }
+            }
+            FetchSellerProfile();
+        }
+    }, [product])
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -66,6 +118,146 @@ function UrunDetay() {
     const handleAddToCart = () => {
         dispatch(addToCart(product));
         alert(`${product.name} sepete eklendi!`);
+    }
+
+    useEffect(() => {
+        if (product && isSeller === false) {
+            const fetchConversationData = async () => {
+                try {
+                    const odaRes = await api.get(`chat/alan/kontrol/${product.seller}/`);
+
+                    if (odaRes.data && odaRes.data.id) {
+                        const varOlanOdaId = odaRes.data.id;
+
+                        setMesajlasmaAlaniId(varOlanOdaId);
+
+                        const mesajlarRes = await api.get(`chat/mesaj/listele/${varOlanOdaId}/`);
+
+                        const formatliMesajlar = mesajlarRes.data.map(msg => {
+                            console.log("Geçmiş Mesaj Testi -> Gelen:", msg.gönderici, "| Benim ID:", myUserId);
+
+                            return {
+                                gönderici: { id: msg.gönderici },
+                                icerik: msg.icerik,
+                                gönderilme_tarihi: msg.gönderilme_tarihi,
+                                bizimMi: String(msg.gönderici) === String(myUserId)
+                            };
+                        });
+
+                        setMesajlar(formatliMesajlar);
+                    }
+                } catch (error) {
+                    if (error.response && error.response.status === 404) {
+                        console.log("Bu satıcıyla henüz sohbet başlatılmamış. İlk mesajı bekliyor.");
+                    } else {
+                        console.error("Geçmiş sohbet kontrolü sırasında hata:", error);
+                    }
+                }
+            }
+            fetchConversationData();
+        }
+    }, [product, isSeller, myUserId])
+
+    useEffect(() => {
+        if (!mesajlasmaAlaniId) return;
+
+        let websocket = null;
+        let reconnectTimeout = null;
+        let isUnmounting = false;
+
+        const connect = () => {
+            if (isUnmounting) return;
+
+            const token = localStorage.getItem(ACCESS_TOKEN);
+            websocket = new WebSocket(
+                `ws://127.0.0.1:8000/ws/chat/${mesajlasmaAlaniId}/?token=${token}`
+            );
+
+            websocket.onopen = () => {
+                console.log("WebSocket açıldı");
+                setWs(websocket)
+            }
+
+            websocket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+
+                if (data.type === "chat_message") {
+                    const gonderenId = data.id;
+                    const gelenIcerik = data.mesaj;
+
+                    setMesajlar((prev) => [
+                        ...prev,
+                        {
+                            icerik: gelenIcerik,
+                            gönderilme_tarihi: data.gönderilme_tarihi,
+                            bizimMi: String(gonderenId) === String(myUserId)
+                        }
+                    ]);
+                }
+            };
+
+            websocket.onclose = async () => {
+                setWs(null);
+                if (!isUnmounting) {
+                    console.log("Yeniden bağlanılıyor...");
+                    reconnectTimeout = setTimeout(connect, 2000);
+                }
+            };
+
+            websocket.onerror = () => {
+                websocket.close();
+            };
+        }
+        connect();
+
+        return () => {
+            isUnmounting = true;
+            if (reconnectTimeout) clearTimeout(reconnectTimeout);
+            if (websocket) websocket.close();
+        };
+    }, [mesajlasmaAlaniId])
+
+    const alanolustur = async (e) => {
+        e.preventDefault();
+
+        if (yeniMesaj.trim() === "") return;
+
+        try {
+            const alanresponse = await api.post(
+                "chat/alan/olustur/",
+                {
+                    satici_id: satici.id
+                });
+
+            const yeniAlanId = alanresponse.data.id;
+
+            await api.post("chat/mesaj/olustur/", {
+                mesajlasma_alani: yeniAlanId,
+                icerik: yeniMesaj
+            })
+
+            setMesajlar([{ icerik: yeniMesaj, bizimMi: true }]);
+            setYeniMesaj("");
+
+            setMesajlasmaAlaniId(yeniAlanId);
+        } catch (error) {
+            console.error("Oda oluşturulurken hata:", error);
+            alert("Mesaj başlatılamadı.");
+        }
+    }
+
+
+    const mesajGönder = async (e) => {
+        if (!mesajlasmaAlaniId || !yeniMesaj.trim()) return;
+
+        if (ws?.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+                mesaj: yeniMesaj
+            }));
+            setYeniMesaj("");
+        } else {
+            console.error("Websocket açık değil")
+        }
     }
 
     return (
@@ -193,7 +385,97 @@ function UrunDetay() {
                     )}
                 </div>
             </div>
+            {!isSeller && (
+                <div style={{ position: 'fixed', bottom: '30px', right: '30px', zIndex: 1000 }}>
+                    {!isChatOpen ? (
+                        <button
+                            onClick={() => setIsChatOpen(true)}
+                            style={{ padding: '15px 25px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '30px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', fontWeight: 'bold' }}
+                        >
+                            <span>💬</span> Satıcıya Soru Sor
+                        </button>
+                    ) : (
+                        <div style={{ width: '350px', height: '480px', backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', overflow: 'hidden', border: '1px solid #e0e0e0' }}>
 
+
+                            <div style={{ backgroundColor: '#007bff', padding: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <span style={{ fontWeight: 'bold', fontSize: '15px' }}>{product.seller_name}</span>
+                                    <span style={{ fontSize: '12px', opacity: 0.8 }}>Satıcı ile sohbet ediyorsunuz</span>
+                                </div>
+                                <button
+                                    onClick={() => setIsChatOpen(false)}
+                                    style={{ background: 'none', border: 'none', color: 'white', fontSize: '24px', cursor: 'pointer', lineHeight: '1' }}
+                                >
+                                    ×
+                                </button>
+                            </div>
+
+
+                            <div style={{ flex: 1, padding: '15px', backgroundColor: '#f8f9fa', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                {mesajlar.length === 0 ? (
+                                    <div style={{ textAlign: 'center', color: '#6c757d', fontSize: '14px', marginTop: '20px' }}>
+                                        <span style={{ fontSize: '30px', display: 'block', marginBottom: '10px' }}>👋</span>
+                                        Satıcıya ürünle ilgili sorularınızı sorabilirsiniz.
+                                    </div>
+                                ) : (
+                                    mesajlar.map((msg, index) => (
+                                        <div
+                                            key={index}
+                                            style={{
+                                                maxWidth: '80%',
+                                                padding: '10px 14px',
+                                                borderRadius: '15px',
+                                                alignSelf: msg.bizimMi ? 'flex-end' : 'flex-start',
+                                                backgroundColor: msg.bizimMi ? '#007bff' : '#e9ecef',
+                                                color: msg.bizimMi ? 'white' : '#212529',
+                                                fontSize: '14px',
+                                                borderBottomRightRadius: msg.bizimMi ? '4px' : '15px',
+                                                borderBottomLeftRadius: msg.bizimMi ? '15px' : '4px'
+                                            }}
+                                        >
+                                            {msg.icerik}
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+
+
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    if (mesajlar.length === 0 && isSeller === false) {
+                                        alanolustur(e);
+                                    } else if (mesajlar.length === 0 && isSeller === true) {
+                                        alert("satıcılar mesaj müşteri mesajlaşma başlatmadan mesaj gönderemez")
+                                    } else if (mesajlar.length > 0) {
+                                        if (yeniMesaj.trim() === "") {
+                                            alert("Mesaj boş bırakılamaz");
+                                        } else {
+                                            mesajGönder();
+                                        }
+                                    }
+                                }}
+                                style={{ padding: '15px', backgroundColor: 'white', borderTop: '1px solid #eee', display: 'flex', gap: '10px' }}
+                            >
+                                <input
+                                    type="text"
+                                    value={yeniMesaj}
+                                    onChange={(e) => setYeniMesaj(e.target.value)}
+                                    placeholder="Mesajınızı yazın..."
+                                    style={{ flex: 1, padding: '10px 15px', border: '1px solid #ddd', borderRadius: '20px', outline: 'none', fontSize: '14px' }}
+                                />
+                                <button
+                                    type="submit"
+                                    style={{ backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                                >
+                                    <span>➤</span>
+                                </button>
+                            </form>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     )
 }
