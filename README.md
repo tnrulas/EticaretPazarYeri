@@ -10,6 +10,9 @@ Projem bir E-Ticaret pazaryeri projesidir. Sitenin özelliklerine aşağıdan ba
 ### Ürün Sayfası
 ![Ürün Sayfası](./screenshots/urun-detay.png)
 
+### Satıcı Profili
+![Satıcı profili](./screenshots/satici-sayfasi.png)
+
 ### Değerlendirmeler ve Yıldız Sistemi
 ![Yorumlar ve Değerlendirmeler](./screenshots/degerlendirmeler.png)
 
