@@ -66,14 +66,14 @@ function ProductList() {
                     {products.map((product) => {
                         const isFavorited = favoriler.includes(product.id);
                         return (
-                            <li key={product.id} className="product-card">
-                                <div className="product-card__image-wrap" style={{ position: 'relative' }}>
+                            <li key={product.id} className="product-card" onClick={() => navigate(`/urunSayfasi/${product.id}`)}>
+                                <div className="product-card__image-wrap">
                                     <img
                                         className="product-card__image"
                                         src={product.photo}
                                         alt={product.name}
                                     />
-                                    <span className="product-card__price">{product.price} ₺</span>
+                                    <span className="product-card__price-badge">{product.price} ₺</span>
 
                                     <button
                                         className={`product-card__favorite-btn ${isFavorited ? 'active' : ''}`}
@@ -88,8 +88,8 @@ function ProductList() {
                                             viewBox="0 0 24 24"
                                             width="20"
                                             height="20"
-                                            fill={isFavorited ? "#ff4757" : "none"}
-                                            stroke={isFavorited ? "#ff4757" : "#636e72"}
+                                            fill={isFavorited ? "#F43F5E" : "none"}
+                                            stroke={isFavorited ? "#F43F5E" : "#475569"}
                                             strokeWidth="2"
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
@@ -97,21 +97,23 @@ function ProductList() {
                                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                                         </svg>
                                     </button>
-
                                 </div>
+
                                 <div className="product-card__body">
                                     <h2 className="product-card__name">{product.name}</h2>
                                     <p className="product-card__description">{product.description}</p>
+
                                     <div className="product-card__meta">
-                                        <span className="product-card__seller">Satıcı: {product.seller}</span>
+                                        <span className="product-card__seller">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                            {product.seller}
+                                        </span>
                                         <span className="product-card__stock">Stok: {product.stock_count}</span>
                                     </div>
-                                    <button
-                                        className="product-card__cta"
-                                        onClick={() => navigate(`/urunSayfasi/${product.id}`)}
-                                    >
-                                        Ürüne git
-                                    </button>
+
+                                    <div className="product-card__cta-area">
+                                        <button className="product-card__cta">Ürüne Git</button>
+                                    </div>
                                 </div>
                             </li>
                         )

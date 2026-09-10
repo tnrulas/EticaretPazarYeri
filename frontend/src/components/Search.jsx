@@ -59,7 +59,7 @@ function SearchAll() {
         <div className="catalog">
             <div className="catalog__header">
                 <p className="catalog__eyebrow">Pazar yeri</p>
-                <h1 className="catalog__title">Ürünler ve Hizmetler</h1>
+                <h1 className="catalog__title">Arama sonuçları</h1>
             </div>
 
             {products.length === 0 ? (

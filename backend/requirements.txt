@@ -10,6 +10,7 @@ mysqlclient
 cryptography
 tzdata
 pillow
-Django channels daphne
+channels
+daphne
 redis
-channel-redis
+channels-redis

@@ -40,23 +40,26 @@ function Navbar() {
     }
 
     return (
-        <nav className='navbar'>
-            <button
-                className="btn"
-                type="button"
-                onClick={() => setBurgerOpen(true)}
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M24 6h-24v-4h24v4zm0 4h-24v4h24v-4zm0 8h-24v4h24v-4z" /></svg>
-            </button>
+        <nav className='navbar-wrapper'>
+            <div className="navbar-left">
+                <button
+                    className="burger-btn"
+                    type="button"
+                    onClick={() => setBurgerOpen(true)}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" /></svg>
+                </button>
+                <h2 className="navbar-logo" onClick={() => navigate('/')}>
+                    E-Pazar
+                </h2>
+            </div>
 
             <div
-                className={`offcanvas offcanvas-start ${burgerOpen ? 'show' : ''}`}
-                style={{ visibility: burgerOpen ? 'visible' : 'hidden' }}
+                className={`offcanvas offcanvas-start custom-sidebar ${burgerOpen ? 'show' : ''}`}
                 tabIndex="-1"
             >
-                <div className="offcanvas-header">
-                    <h5 className="offcanvas-title">Kategoriler</h5>
-
+                <div className="offcanvas-header sidebar-header">
+                    <h5 className="sidebar-title">Kategoriler</h5>
                     <button
                         type="button"
                         className="btn-close"
@@ -64,52 +67,38 @@ function Navbar() {
                         aria-label="Close"
                     ></button>
                 </div>
-                <div className="offcanvas-body">
-
+                <div className="offcanvas-body sidebar-body">
                     <div
-                        className="list-group-item list-group-item-action"
+                        className="sidebar-item sidebar-item-favorite"
                         onClick={() => {
                             navigate('/favoriler');
                             setBurgerOpen(false);
                         }}
-                        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', color: '#ff4757', fontWeight: 'bold', borderBottom: '2px solid #eee', paddingBottom: '15px', marginBottom: '10px' }}
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            width="20"
-                            height="20"
-                            fill="#ff4757"
-                            stroke="#ff4757"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
                         Favorilerim
                     </div>
 
-                    <ul className="list-group list-group-flush">
-                        <li onClick={() => handleCategory('Elektronik')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Elektronik</li>
-                        <li onClick={() => handleCategory('Moda & Giyim')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Moda & Giyim</li>
-                        <li onClick={() => handleCategory('Ev, Mobilya & Yaşam')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Ev, Mobilya & Yaşam</li>
-                        <li onClick={() => handleCategory('Kozmetik & Kişisel Bakım')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Kozmetik & Kişisel Bakım</li>
-                        <li onClick={() => handleCategory('Anne, Bebek & Oyuncak')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Anne, Bebek & Oyuncak</li>
-                        <li onClick={() => handleCategory('Spor & Outdoor')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Spor & Outdoor</li>
-                        <li onClick={() => handleCategory('Süpermarket & Gıda')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Süpermarket & Gıda</li>
-                        <li onClick={() => handleCategory('Kitap, Müzik & Hobi')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Kitap, Müzik & Hobi</li>
-                        <li onClick={() => handleCategory('Otomobil & Motosiklet')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Otomobil & Motosiklet</li>
-                        <li onClick={() => handleCategory('Evcil Hayvan Ürünleri')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Evcil Hayvan Ürünleri</li>
-                        <li onClick={() => handleCategory('Ofis & Kırtasiye')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Ofis & Kırtasiye</li>
-                        <li onClick={() => handleCategory('Saat, Takı & Aksesuar')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Saat, Takı & Aksesuar</li>
-                        <li onClick={() => handleCategory('Ayakkabı & Çanta')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Ayakkabı & Çanta</li>
-                        <li onClick={() => handleCategory('Yapı Market & Hırdavat')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Yapı Market & Hırdavat</li>
-                        <li onClick={() => handleCategory('Bahçe & Teras')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Bahçe & Teras</li>
-                        <li onClick={() => handleCategory('Oyun & Konsol')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Oyun & Konsol</li>
-                        <li onClick={() => handleCategory('Sağlık & Medikal Ürünler')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Sağlık & Medikal Ürünler</li>
-                        <li onClick={() => handleCategory('Müzik Aletleri')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Müzik Aletleri</li>
-                        <li onClick={() => handleCategory('Sanat, Hobi & El İşi')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Sanat, Hobi & El İşi</li>
+                    <ul className="sidebar-menu">
+                        <li onClick={() => handleCategory('Elektronik')} className="sidebar-item">Elektronik</li>
+                        <li onClick={() => handleCategory('Moda & Giyim')} className="sidebar-item">Moda & Giyim</li>
+                        <li onClick={() => handleCategory('Ev, Mobilya & Yaşam')} className="sidebar-item">Ev, Mobilya & Yaşam</li>
+                        <li onClick={() => handleCategory('Kozmetik & Kişisel Bakım')} className="sidebar-item">Kozmetik & Kişisel Bakım</li>
+                        <li onClick={() => handleCategory('Anne, Bebek & Oyuncak')} className="sidebar-item">Anne, Bebek & Oyuncak</li>
+                        <li onClick={() => handleCategory('Spor & Outdoor')} className="sidebar-item">Spor & Outdoor</li>
+                        <li onClick={() => handleCategory('Süpermarket & Gıda')} className="sidebar-item">Süpermarket & Gıda</li>
+                        <li onClick={() => handleCategory('Kitap, Müzik & Hobi')} className="sidebar-item">Kitap, Müzik & Hobi</li>
+                        <li onClick={() => handleCategory('Otomobil & Motosiklet')} className="sidebar-item">Otomobil & Motosiklet</li>
+                        <li onClick={() => handleCategory('Evcil Hayvan Ürünleri')} className="sidebar-item">Evcil Hayvan Ürünleri</li>
+                        <li onClick={() => handleCategory('Ofis & Kırtasiye')} className="sidebar-item">Ofis & Kırtasiye</li>
+                        <li onClick={() => handleCategory('Saat, Takı & Aksesuar')} className="sidebar-item">Saat, Takı & Aksesuar</li>
+                        <li onClick={() => handleCategory('Ayakkabı & Çanta')} className="sidebar-item">Ayakkabı & Çanta</li>
+                        <li onClick={() => handleCategory('Yapı Market & Hırdavat')} className="sidebar-item">Yapı Market & Hırdavat</li>
+                        <li onClick={() => handleCategory('Bahçe & Teras')} className="sidebar-item">Bahçe & Teras</li>
+                        <li onClick={() => handleCategory('Oyun & Konsol')} className="sidebar-item">Oyun & Konsol</li>
+                        <li onClick={() => handleCategory('Sağlık & Medikal Ürünler')} className="sidebar-item">Sağlık & Medikal Ürünler</li>
+                        <li onClick={() => handleCategory('Müzik Aletleri')} className="sidebar-item">Müzik Aletleri</li>
+                        <li onClick={() => handleCategory('Sanat, Hobi & El İşi')} className="sidebar-item">Sanat, Hobi & El İşi</li>
                     </ul>
                 </div>
             </div>
@@ -122,53 +111,58 @@ function Navbar() {
                 ></div>
             )}
 
-
-            <h2 className="navbar__logo" onClick={() => navigate('/')} >
-                Benim E-ticaret Sitem
-            </h2>
-
-
-            <input
-                type='text'
-                placeholder='ara'
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={handleSearch}>
-            </input>
-
-            {user === null ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => navigate('/giris')}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#ccc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        👤
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontSize: '14px', fontWeight: 'bold' }}>Giriş Yap</span>
-                        <span style={{ fontSize: '12px', color: 'gray' }}>Hesap Yok</span>
-                    </div>
+            <div className="navbar-center">
+                <div className="search-container">
+                    <svg className="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    <input
+                        className="search-input"
+                        type='text'
+                        placeholder='Ürün, kategori veya marka ara...'
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={handleSearch}>
+                    </input>
                 </div>
-            ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#007bff', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '18px' }}>
-                        {user.username.charAt(0).toUpperCase()}
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{user.username}</span>
-                        <span style={{ fontSize: '12px', color: 'gray' }}>
-                            {isSeller ? 'Satıcı Hesabı' : 'Müşteri Hesabı'}
-                        </span>
-                    </div>
-                </div>
-            )}
+            </div>
 
-            <div className="navbar__links">
-                <span className='navbar__link' onClick={() => navigate('/siparislerim')}>Siparişlerim</span>
-                <span className="navbar__link" onClick={() => navigate('/sepet')}>Sepetim</span>
-                {isSeller && (
-                    <span
-                        className="navbar__link navbar__link--seller"
-                        onClick={() => navigate('/urunOlustur')}
-                    >
-                        Ürün Ekle
+            <div className="navbar-right">
+                <div className="nav-links">
+                    <span className='nav-link' onClick={() => navigate('/siparislerim')}>Siparişlerim</span>
+                    <span className="nav-link" onClick={() => navigate('/sepet')}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                        Sepetim
                     </span>
+                    {isSeller && (
+                        <span
+                            className="nav-link seller-badge"
+                            onClick={() => navigate('/urunOlustur')}
+                        >
+                            + Ürün Ekle
+                        </span>
+                    )}
+                </div>
+
+                {user === null ? (
+                    <div className="user-profile-badge" onClick={() => navigate('/giris')}>
+                        <div className="user-avatar" style={{ background: '#E2E8F0', color: '#475569' }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
+                        </div>
+                        <div className="user-info">
+                            <span className="user-name">Giriş Yap</span>
+                            <span className="user-role">Kayıt Ol</span>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="user-profile-badge" onClick={() => navigate('/dashboard')}>
+                        <div className="user-avatar">
+                            {user.username.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="user-info">
+                            <span className="user-name">{user.username}</span>
+                            <span className="user-role">
+                                {isSeller ? 'Satıcı' : 'Müşteri'}
+                            </span>
+                        </div>
+                    </div>
                 )}
             </div>
         </nav>

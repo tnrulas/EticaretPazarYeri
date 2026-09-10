@@ -309,252 +309,203 @@ function UrunDetay() {
     }
 
     return (
-        <div className="product-detail">
+        <div className="product-detail-container">
             {product && (
-                <div className="product-detail__layout">
-                    <div style={{ width: '100%' }}>
-                        <div style={{ width: '100%', height: '400px', border: '1px solid #ccc', borderRadius: '8px', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <div className="product-split-layout">
+                    <div className="gallery-section">
+                        <div className="main-image-card">
                             <img
                                 src={activeImage}
                                 alt={product.name}
-                                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                             />
                         </div>
-                        <div style={{ display: 'flex', gap: '10px', marginTop: '15px', overflowX: 'auto' }}>
-
-                            <img
-                                src={product.photo}
-                                alt="Kapak"
+                        <div className="thumbnail-strip">
+                            <div
+                                className={`thumbnail-item ${activeImage === product.photo ? 'active' : ''}`}
                                 onClick={() => setActiveImage(product.photo)}
-                                style={{
-                                    width: '80px', height: '80px', cursor: 'pointer', objectFit: 'cover', borderRadius: '5px',
-                                    border: activeImage === product.photo ? '3px solid #007bff' : '1px solid #ddd'
-                                }}
-                            />
+                            >
+                                <img src={product.photo} alt="Kapak" />
+                            </div>
 
                             {product.images && product.images.map((item) => (
-                                <img
+                                <div
+                                    className={`thumbnail-item ${activeImage === item.image ? 'active' : ''}`}
                                     key={item.id}
-                                    src={item.image}
-                                    alt="Ekstra"
                                     onClick={() => setActiveImage(item.image)}
-                                    style={{
-                                        width: '80px', height: '80px', cursor: 'pointer', objectFit: 'cover', borderRadius: '5px',
-                                        border: activeImage === item.image ? '3px solid #007bff' : '1px solid #ddd'
-                                    }}
-                                />
+                                >
+                                    <img src={item.image} alt="Ekstra" />
+                                </div>
                             ))}
                         </div>
-
                     </div>
 
-                    <div className="product-detail__info">
-                        <span className="product-detail__seller">Satıcı: {product.seller}</span>
-                        <h2 className="product-detail__name">{product.name}</h2>
-                        <p className="product-detail__description">{product.description}</p>
-
-                        <div className="product-detail__price-tag">
-                            <span className="product-detail__price">{product.price} ₺</span>
+                    <div className="info-section">
+                        <div className="seller-tag" onClick={() => navigate(`/satici/${product.seller}`)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            Satıcı: {product.seller_name}
                         </div>
 
-                        <ul className="product-detail__facts">
-                            <li>
-                                <span>Stok</span>
-                                <strong>{product.stock_count}</strong>
-                            </li>
-                            <li>
-                                <span>Adet</span>
-                                <strong>{product.quantity}</strong>
-                            </li>
-                        </ul>
+                        <h1 className="product-title">{product.name}</h1>
+                        <p className="product-desc">{product.description}</p>
 
-                        <div style={{ display: 'flex', gap: '15px', alignItems: 'center', marginTop: '20px', marginBottom: '20px' }}>
-                            <button
-                                className="product-detail__cta"
-                                onClick={handleAddToCart}
-                                style={{ flex: 1, margin: 0 }}
-                            >
+                        <div className="price-box">
+                            <span className="price-amount">{product.price} ₺</span>
+                        </div>
+
+                        <div className="inventory-stats">
+                            <div className="stat-item">
+                                <span className="stat-label">Stok Durumu</span>
+                                <span className="stat-value">{product.stock_count} Adet</span>
+                            </div>
+                            <div className="stat-item">
+                                <span className="stat-label">Toplam Satış</span>
+                                <span className="stat-value">{product.quantity}</span>
+                            </div>
+                        </div>
+
+                        <div className="action-group">
+                            <button className="btn-add-cart" onClick={handleAddToCart}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                                 Sepete Ekle
                             </button>
 
                             <button
+                                className={`btn-favorite-large ${isFavorited ? 'is-active' : ''}`}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     addFavorites(product.id);
                                 }}
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    minWidth: '54px',
-                                    height: '54px',
-                                    borderRadius: '12px',
-                                    backgroundColor: isFavorited ? '#fff1f2' : '#ffffff',
-                                    border: `2px solid ${isFavorited ? '#ff4757' : '#e0e0e0'}`,
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease',
-                                    boxShadow: isFavorited ? '0 4px 12px rgba(255, 71, 87, 0.15)' : '0 2px 5px rgba(0,0,0,0.05)'
-                                }}
                                 title={isFavorited ? "Favorilerden Çıkar" : "Favorilere Ekle"}
-                                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                                onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.95)'}
                             >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    width="26"
-                                    height="26"
-                                    fill={isFavorited ? "#ff4757" : "none"}
-                                    stroke={isFavorited ? "#ff4757" : "#6c757d"}
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    style={{
-                                        transition: 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                                        transform: isFavorited ? 'scale(1.15)' : 'scale(1)'
-                                    }}
-                                >
-                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill={isFavorited ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                             </button>
-                        </div>
-                        <h1>Satıcı:</h1>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => navigate(`/satici/${product.seller}`)}>
-                            <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#ccc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                👤
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{product.seller_name}</span>
-                                <span style={{ fontSize: '12px', color: 'gray' }}>Hesap Yok</span>
-                            </div>
                         </div>
                     </div>
                 </div>
             )}
-            <div>
-                <h3>Ürün yorumları ({reviews.length})</h3>
-                <form onSubmit={handleAddReview}>
-                    <div>
+            <div className="reviews-section">
+                <h3 className="reviews-header">Değerlendirmeler ({reviews.length})</h3>
+
+                <div className="review-form-card">
+                    <form className="review-form-inner" onSubmit={handleAddReview}>
                         <input
+                            className="review-input"
                             type='text'
                             value={newReviewText}
+                            placeholder="Ürün hakkındaki düşüncelerinizi paylaşın..."
                             onChange={(e) => setNewReviewText(e.target.value)}
                             required
                         />
                         <select
+                            className="review-select"
                             value={rating}
                             onChange={(e) => setRating(e.target.value)}
                             required
                         >
-                            <option value={5}>5 Yıldız</option>
-                            <option value={4}>4 Yıldız</option>
-                            <option value={3}>3 Yıldız</option>
-                            <option value={2}>2 Yıldız</option>
-                            <option value={1}>1 Yıldız</option>
+                            <option value={5}>⭐⭐⭐⭐⭐ (5 Yıldız)</option>
+                            <option value={4}>⭐⭐⭐⭐ (4 Yıldız)</option>
+                            <option value={3}>⭐⭐⭐ (3 Yıldız)</option>
+                            <option value={2}>⭐⭐ (2 Yıldız)</option>
+                            <option value={1}>⭐ (1 Yıldız)</option>
                         </select>
-                        <button type='submit'>Gönder</button>
-                    </div>
-                </form>
+                        <button className="btn-submit-review" type='submit'>Gönder</button>
+                    </form>
+                </div>
 
-                <div>
+                <div className="reviews-list">
                     {reviews.length === 0 ? (
-                        <p>Bu ürüne henüz yorum yapılmamış</p>
+                        <p style={{ color: 'var(--color-ink-faint)', textAlign: 'center', padding: '2rem' }}>Henüz değerlendirme yapılmamış. İlk değerlendiren siz olun!</p>
                     ) : (
-                        <ul>
-                            {reviews.map((review) => (
-                                <li key={review.id}>
-                                    <div>
-                                        <strong>{review.username}</strong>
-                                        <span>{review.username}</span>
+                        reviews.map((review) => (
+                            <div className="review-card" key={review.id}>
+                                <div className="review-meta">
+                                    <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                                        {review.username.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <span className="reviewer-name">{review.username}</span>
                                         {review.is_buyed && (
-                                            <span>
-                                                ✅ Ürünü Satın Aldı
+                                            <span className="buyer-badge">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                Doğrulanmış Satın Alım
                                             </span>
                                         )}
                                     </div>
-                                    <p>{review.message}</p>
-                                </li>
-                            ))}
-                        </ul>
+                                </div>
+                                <p className="review-text">{review.message}</p>
+                            </div>
+                        ))
                     )}
                 </div>
             </div>
             {onerilenUrunler.length > 0 && (
-                <div style={{ marginTop: '50px', borderTop: '2px solid #eee', paddingTop: '20px' }}>
-                    <h3>İlginizi Çekebilecek Benzer Ürünler</h3>
+                <div className="recommended-section">
+                    <h3 className="reviews-header">İlginizi Çekebilecek Benzer Ürünler</h3>
                     <div style={{ display: 'flex', gap: '20px', overflowX: 'auto', padding: '10px 0' }}>
                         {onerilenUrunler.map((urun) => (
                             <div
                                 key={urun.id}
+                                className="product-card"
                                 onClick={() => navigate(`/urunSayfasi/${urun.id}`)}
-                                style={{ minWidth: '180px', maxWidth: '180px', cursor: 'pointer', border: '1px solid #ddd', padding: '10px', borderRadius: '10px', transition: 'transform 0.2s' }}
-                                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.03)'}
-                                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                style={{ minWidth: '220px', maxWidth: '220px' }}
                             >
-                                <img
-                                    src={urun.photo}
-                                    alt={urun.name}
-                                    style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '6px' }}
-                                />
-                                <h4 style={{ fontSize: '15px', margin: '10px 0 5px', color: '#333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                    {urun.name}
-                                </h4>
-                                <span style={{ fontWeight: 'bold', color: '#007bff', fontSize: '16px' }}>
-                                    {urun.price} ₺
-                                </span>
+                                <div className="product-card__image-wrap">
+                                    <img src={urun.photo} alt={urun.name} className="product-card__image" />
+                                </div>
+                                <div className="product-card__body" style={{ padding: '1rem' }}>
+                                    <h4 className="product-card__name" style={{ fontSize: '1.1rem', marginBottom: '0.2rem' }}>{urun.name}</h4>
+                                    <span style={{ fontWeight: '800', color: 'var(--color-ink)' }}>{urun.price} ₺</span>
+                                </div>
                             </div>
                         ))}
                     </div>
                 </div>
             )}
+
             {!isSeller && (
                 <div style={{ position: 'fixed', bottom: '30px', right: '30px', zIndex: 1000 }}>
                     {!isChatOpen ? (
-                        <button
-                            onClick={() => setIsChatOpen(true)}
-                            style={{ padding: '15px 25px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '30px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', fontWeight: 'bold' }}
-                        >
-                            <span>💬</span> Satıcıya Soru Sor
+                        <button className="chat-fab" onClick={() => setIsChatOpen(true)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            Satıcıya Soru Sor
                         </button>
                     ) : (
-                        <div style={{ width: '350px', height: '480px', backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', overflow: 'hidden', border: '1px solid #e0e0e0' }}>
-
-
-                            <div style={{ backgroundColor: '#007bff', padding: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
+                        <div className="chat-window">
+                            <div className="chat-header">
                                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                    <span style={{ fontWeight: 'bold', fontSize: '15px' }}>{product.seller_name}</span>
-                                    <span style={{ fontSize: '12px', opacity: 0.8 }}>Satıcı ile sohbet ediyorsunuz</span>
+                                    <span style={{ fontWeight: '700', fontSize: '1.1rem' }}>{product.seller_name}</span>
+                                    <span style={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: '500' }}>Canlı Destek</span>
                                 </div>
                                 <button
                                     onClick={() => setIsChatOpen(false)}
-                                    style={{ background: 'none', border: 'none', color: 'white', fontSize: '24px', cursor: 'pointer', lineHeight: '1' }}
+                                    style={{ background: 'none', border: 'none', color: 'white', fontSize: '24px', cursor: 'pointer', lineHeight: '1', width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.2)' }}
                                 >
                                     ×
                                 </button>
                             </div>
 
-
-                            <div style={{ flex: 1, padding: '15px', backgroundColor: '#f8f9fa', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            <div className="chat-body">
                                 {mesajlar.length === 0 ? (
-                                    <div style={{ textAlign: 'center', color: '#6c757d', fontSize: '14px', marginTop: '20px' }}>
-                                        <span style={{ fontSize: '30px', display: 'block', marginBottom: '10px' }}>👋</span>
-                                        Satıcıya ürünle ilgili sorularınızı sorabilirsiniz.
+                                    <div style={{ textAlign: 'center', color: 'var(--color-ink-faint)', fontSize: '0.9rem', marginTop: '2rem' }}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '1rem', opacity: '0.5' }}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                        <p>Satıcıya ürünle ilgili sorularınızı sorabilirsiniz.</p>
                                     </div>
                                 ) : (
                                     mesajlar.map((msg, index) => (
                                         <div
                                             key={index}
                                             style={{
-                                                maxWidth: '80%',
+                                                maxWidth: '85%',
                                                 padding: '10px 14px',
-                                                borderRadius: '15px',
+                                                borderRadius: '16px',
                                                 alignSelf: msg.bizimMi ? 'flex-end' : 'flex-start',
-                                                backgroundColor: msg.bizimMi ? '#007bff' : '#e9ecef',
-                                                color: msg.bizimMi ? 'white' : '#212529',
-                                                fontSize: '14px',
-                                                borderBottomRightRadius: msg.bizimMi ? '4px' : '15px',
-                                                borderBottomLeftRadius: msg.bizimMi ? '15px' : '4px'
+                                                backgroundColor: msg.bizimMi ? 'var(--color-primary)' : 'var(--color-surface)',
+                                                color: msg.bizimMi ? '#fff' : 'var(--color-ink)',
+                                                fontSize: '0.9rem',
+                                                borderBottomRightRadius: msg.bizimMi ? '4px' : '16px',
+                                                borderBottomLeftRadius: msg.bizimMi ? '16px' : '4px',
+                                                border: msg.bizimMi ? 'none' : '1px solid var(--color-line)',
+                                                boxShadow: 'var(--shadow-sm)'
                                             }}
                                         >
                                             {msg.icerik}
@@ -563,14 +514,13 @@ function UrunDetay() {
                                 )}
                             </div>
 
-
-                            <form
+                            <form className="chat-form"
                                 onSubmit={(e) => {
                                     e.preventDefault();
                                     if (mesajlar.length === 0 && isSeller === false) {
                                         alanolustur(e);
                                     } else if (mesajlar.length === 0 && isSeller === true) {
-                                        alert("satıcılar mesaj müşteri mesajlaşma başlatmadan mesaj gönderemez")
+                                        alert("satıcılar müşteri mesajlaşma başlatmadan mesaj gönderemez")
                                     } else if (mesajlar.length > 0) {
                                         if (yeniMesaj.trim() === "") {
                                             alert("Mesaj boş bırakılamaz");
@@ -579,20 +529,19 @@ function UrunDetay() {
                                         }
                                     }
                                 }}
-                                style={{ padding: '15px', backgroundColor: 'white', borderTop: '1px solid #eee', display: 'flex', gap: '10px' }}
                             >
                                 <input
                                     type="text"
                                     value={yeniMesaj}
                                     onChange={(e) => setYeniMesaj(e.target.value)}
                                     placeholder="Mesajınızı yazın..."
-                                    style={{ flex: 1, padding: '10px 15px', border: '1px solid #ddd', borderRadius: '20px', outline: 'none', fontSize: '14px' }}
+                                    style={{ flex: 1, padding: '0.8rem 1rem', border: '1px solid var(--color-line)', borderRadius: 'var(--radius-full)', outline: 'none', fontSize: '0.9rem', background: 'var(--color-surface-hover)' }}
                                 />
                                 <button
                                     type="submit"
-                                    style={{ backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                                    style={{ backgroundColor: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: 'var(--radius-full)', width: '42px', height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s', boxShadow: 'var(--shadow-md)' }}
                                 >
-                                    <span>➤</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                                 </button>
                             </form>
                         </div>

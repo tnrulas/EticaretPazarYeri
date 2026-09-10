@@ -144,7 +144,6 @@ function UrunOlustur() {
                             value={kategori}
                             onChange={(e) => setKategori(e.target.value)}
                             required
-                            style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
                         >
                             <option value="" disabled>Lütfen bir kategori seçin</option>
                             {categories.map((cat, index) => (

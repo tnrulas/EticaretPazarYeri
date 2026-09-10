@@ -1,49 +1,70 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
-    /* --- Palette --- */
-    --color-bg: #F5F6F1;
-    /* page background — soft paper */
+    /* --- Modern Palette --- */
+    --color-bg: #F8FAFC;
+    /* Light slate background */
     --color-surface: #FFFFFF;
-    /* cards / inputs */
-    --color-ink: #16202A;
-    /* primary text */
-    --color-ink-soft: #5B6874;
-    /* secondary text */
-    --color-ink-faint: #8B96A0;
-    /* tertiary / labels */
+    --color-surface-hover: #F1F5F9;
 
-    --color-primary: #0F5C5C;
-    /* deep teal — brand, links, buyer actions */
-    --color-primary-dark: #0A4444;
-    --color-primary-soft: #E4EEEC;
+    --color-ink: #0F172A;
+    /* Slate 900 */
+    --color-ink-soft: #475569;
+    /* Slate 600 */
+    --color-ink-faint: #94A3B8;
+    /* Slate 400 */
 
-    --color-accent: #E8A33D;
-    /* marigold — primary CTAs, price highlights */
-    --color-accent-dark: #C9862A;
+    /* Vibrant Accents */
+    --color-primary: #6366F1;
+    /* Indigo 500 */
+    --color-primary-hover: #4F46E5;
+    /* Indigo 600 */
+    --color-primary-soft: #E0E7FF;
+    /* Indigo 100 */
 
-    --color-stamp: #B23A48;
-    /* brick red — seller / kurumsal badges */
-    --color-stamp-soft: #F6E3E0;
+    --color-accent: #F43F5E;
+    /* Rose 500 */
+    --color-accent-hover: #E11D48;
+    /* Rose 600 */
+    --color-accent-soft: #FFE4E6;
+    /* Rose 100 */
 
-    --color-line: #DDD7C8;
-    /* hairline borders */
+    --color-success: #10B981;
+    --color-success-bg: #D1FAE5;
+
+    --color-stamp: #F59E0B;
+    /* Amber 500 for seller badges */
+    --color-stamp-soft: #FEF3C7;
+    /* Amber 100 */
+
+    --color-line: #E2E8F0;
+    /* Slate 200 */
 
     /* --- Type --- */
-    --font-display: 'Fraunces', Georgia, serif;
-    /* headings */
-    --font-body: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    /* everything else */
-    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
-    /* prices, quantities — "receipt" numbers */
+    --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
+    --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 
-    /* --- Shape / shadow --- */
-    --radius-sm: 3px;
-    --radius-md: 8px;
-    --notch: 20px;
-    /* size of the cut "ticket" corner used on cards */
-    --shadow-card: 0 1px 2px rgba(22, 32, 42, 0.06), 0 6px 16px rgba(22, 32, 42, 0.06);
-    --shadow-lift: 0 10px 28px rgba(22, 32, 42, 0.14);
+    /* --- Shape & Shadow --- */
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-full: 9999px;
+
+    /* Soft modern shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Resets */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -51,4 +72,64 @@ body {
     color: var(--color-ink);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-ink);
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+button {
+    font-family: var(--font-body);
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+input,
+textarea,
+select {
+    font-family: var(--font-body);
+}
+
+/* Glassmorphism utility */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Pulse Animation for tags / badges */
+@keyframes pulse-soft {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
 }
