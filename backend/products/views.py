@@ -101,3 +101,22 @@ class ProductReviewView(generics.ListCreateAPIView):
             raise PermissionDenied("Sadece bu ürünü satın alan kullanıcılar yorum yapabilir.")
         
         serializer.save(user=user, product=product, is_buyed=is_bought)
+
+class ProductSuggestionView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        
+        product_id = self.kwargs.get('product_id')
+        try:
+            
+            current_product = Product.objects.get(id=product_id)
+            
+            return Product.objects.filter(
+                category=current_product.category
+                ).exclude(
+                    id=product_id
+                ).order_by('?')[:5]
+        except Product.DoesNotExist:
+            return Product.objects.none()

@@ -28,12 +28,17 @@ function UrunDetay() {
     const [mesajlasmaAlaniId, setMesajlasmaAlaniId] = useState(null);
     const [katilimcilar, setKatilimcilar] = useState([])
 
+    const [favoriler, setFavoriler] = useState([]);
+    const isFavorited = product ? favoriler.includes(product.id) : false;
+
     const isSeller = localStorage.getItem('is_seller') === 'true';
 
     const [ws, setWs] = useState(null);
 
     const token = localStorage.getItem(ACCESS_TOKEN);
     let myUserId = null;
+
+    const [onerilenUrunler, setOnerilenUrunler] = useState([]);
 
     if (token) {
         try {
@@ -120,6 +125,49 @@ function UrunDetay() {
         alert(`${product.name} sepete eklendi!`);
     }
 
+    useEffect(() => {
+        if (product && product.id) {
+            const fetchOneriler = async () => {
+                try {
+                    const response = await api.get(`urunler/urunler/${product.id}/oneriler/`);
+                    setOnerilenUrunler(response.data);
+                    console.log("Çekilen Öneriler:", response.data);
+                } catch (error) {
+                    console.error("Önerilen ürünler çekilemedi:", error);
+                }
+            }
+            fetchOneriler();
+        }
+    }, [product]);
+
+    useEffect(() => {
+        const fetchFavorites = async () => {
+            try {
+                const response = await api.get('accounts/favorilerim/');
+                const favoriteIds = response.data.map(item => item.id);
+                setFavoriler(favoriteIds);
+            } catch (error) {
+                console.error("Favoriler çekilirken hata oluştu:", error);
+            }
+        }
+        fetchFavorites();
+    }, [])
+
+    const addFavorites = async (id) => {
+        try {
+            const response = await api.post(`accounts/favori-islem/${id}/`)
+
+            if (response.data.durum) {
+                setFavoriler([...favoriler, id])
+            } else {
+                setFavoriler(favoriler.filter(favId => favId !== id))
+            }
+        } catch (error) {
+            console.error("Favori işlemi başarısız:", error);
+        }
+    }
+
+    // ---------------------------------------------------------------------------------
     useEffect(() => {
         if (product && isSeller === false) {
             const fetchConversationData = async () => {
@@ -284,7 +332,6 @@ function UrunDetay() {
                                 }}
                             />
 
-
                             {product.images && product.images.map((item) => (
                                 <img
                                     key={item.id}
@@ -321,9 +368,57 @@ function UrunDetay() {
                             </li>
                         </ul>
 
-                        <button className="product-detail__cta" onClick={handleAddToCart}>
-                            Sepete Ekle
-                        </button>
+                        <div style={{ display: 'flex', gap: '15px', alignItems: 'center', marginTop: '20px', marginBottom: '20px' }}>
+                            <button
+                                className="product-detail__cta"
+                                onClick={handleAddToCart}
+                                style={{ flex: 1, margin: 0 }}
+                            >
+                                Sepete Ekle
+                            </button>
+
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    addFavorites(product.id);
+                                }}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    minWidth: '54px',
+                                    height: '54px',
+                                    borderRadius: '12px',
+                                    backgroundColor: isFavorited ? '#fff1f2' : '#ffffff',
+                                    border: `2px solid ${isFavorited ? '#ff4757' : '#e0e0e0'}`,
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease',
+                                    boxShadow: isFavorited ? '0 4px 12px rgba(255, 71, 87, 0.15)' : '0 2px 5px rgba(0,0,0,0.05)'
+                                }}
+                                title={isFavorited ? "Favorilerden Çıkar" : "Favorilere Ekle"}
+                                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.95)'}
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    width="26"
+                                    height="26"
+                                    fill={isFavorited ? "#ff4757" : "none"}
+                                    stroke={isFavorited ? "#ff4757" : "#6c757d"}
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    style={{
+                                        transition: 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                                        transform: isFavorited ? 'scale(1.15)' : 'scale(1)'
+                                    }}
+                                >
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                            </button>
+                        </div>
                         <h1>Satıcı:</h1>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => navigate(`/satici/${product.seller}`)}>
                             <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#ccc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -385,6 +480,34 @@ function UrunDetay() {
                     )}
                 </div>
             </div>
+            {onerilenUrunler.length > 0 && (
+                <div style={{ marginTop: '50px', borderTop: '2px solid #eee', paddingTop: '20px' }}>
+                    <h3>İlginizi Çekebilecek Benzer Ürünler</h3>
+                    <div style={{ display: 'flex', gap: '20px', overflowX: 'auto', padding: '10px 0' }}>
+                        {onerilenUrunler.map((urun) => (
+                            <div
+                                key={urun.id}
+                                onClick={() => navigate(`/urunSayfasi/${urun.id}`)}
+                                style={{ minWidth: '180px', maxWidth: '180px', cursor: 'pointer', border: '1px solid #ddd', padding: '10px', borderRadius: '10px', transition: 'transform 0.2s' }}
+                                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.03)'}
+                                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                            >
+                                <img
+                                    src={urun.photo}
+                                    alt={urun.name}
+                                    style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '6px' }}
+                                />
+                                <h4 style={{ fontSize: '15px', margin: '10px 0 5px', color: '#333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {urun.name}
+                                </h4>
+                                <span style={{ fontWeight: 'bold', color: '#007bff', fontSize: '16px' }}>
+                                    {urun.price} ₺
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
             {!isSeller && (
                 <div style={{ position: 'fixed', bottom: '30px', right: '30px', zIndex: 1000 }}>
                     {!isChatOpen ? (

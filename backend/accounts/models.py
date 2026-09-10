@@ -15,5 +15,7 @@ class CustomUser(AbstractUser):
     
     email = models.EmailField(unique=True)
     
+    favorites = models.ManyToManyField('products.Product', related_name='favorited_by', blank=True)
+    
     def __str__(self):
         return f"{self.username} - {'Satıcı' if self.is_seller else 'Alıcı'}"

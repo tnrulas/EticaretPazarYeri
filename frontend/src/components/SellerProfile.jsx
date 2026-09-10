@@ -9,6 +9,7 @@ function Seller() {
     const navigate = useNavigate();
     const [allProducts, setAllProducts] = useState([])
     const [sellerProfile, setSellerProfile] = useState(null);
+    const [favoriler, setFavoriler] = useState([])
 
     const { id } = useParams();
 
@@ -37,6 +38,33 @@ function Seller() {
         }
         FetchSellerProfile();
     }, [id])
+
+    useEffect(() => {
+        const fetchFavorites = async () => {
+            try {
+                const response = await api.get('accounts/favorilerim/');
+                const favoriteIds = response.data.map(item => item.id);
+                setFavoriler(favoriteIds);
+            } catch (error) {
+                console.error("Favoriler çekilirken hata oluştu:", error);
+            }
+        }
+        fetchFavorites();
+    }, [])
+
+    const addFavorites = async (id) => {
+        try {
+            const response = await api.post(`accounts/favori-islem/${id}/`)
+
+            if (response.data.durum) {
+                setFavoriler([...favoriler, id])
+            } else {
+                setFavoriler(favoriler.filter(favId => favId !== id))
+            }
+        } catch (error) {
+            console.error("Favori işlemi başarısız:", error);
+        }
+    }
 
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
@@ -111,15 +139,40 @@ function Seller() {
                 ) : (
                     <ul className="catalog__grid">
                         {allProducts.map((product) => {
+                            const isFavorited = favoriler.includes(product.id);
                             return (
                                 <li key={product.id} className="product-card">
-                                    <div className="product-card__image-wrap">
+                                    <div className="product-card__image-wrap" style={{ position: 'relative' }}>
                                         <img
                                             className="product-card__image"
                                             src={product.photo}
                                             alt={product.name}
                                         />
                                         <span className="product-card__price">{product.price} ₺</span>
+
+                                        <button
+                                            className={`product-card__favorite-btn ${isFavorited ? 'active' : ''}`}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                addFavorites(product.id)
+                                            }}
+                                            title="Favorilere Ekle"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24"
+                                                width="20"
+                                                height="20"
+                                                fill={isFavorited ? "#ff4757" : "none"}
+                                                stroke={isFavorited ? "#ff4757" : "#636e72"}
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            >
+                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                            </svg>
+                                        </button>
+
                                     </div>
                                     <div className="product-card__body">
                                         <h2 className="product-card__name">{product.name}</h2>

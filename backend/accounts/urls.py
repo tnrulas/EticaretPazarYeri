@@ -9,5 +9,7 @@ urlpatterns = [
     path('auth/giris/', CustomLoginView.as_view(), name='kullanici-giris'),
     path('auth/yenile/', TokenRefreshView.as_view(), name='token-yenile'),
     path('listele/', ListMyAccountView.as_view(), name='profilim'),
-    path('satici/<int:seller_id>/', ListSellerAccountView.as_view(), name='saticiP')
+    path('satici/<int:seller_id>/', ListSellerAccountView.as_view(), name='saticiP'),
+    path('favorilerim/', ListFavoritesView.as_view(), name='favori-listesi'),
+    path('favori-islem/<int:product_id>/', ToggleFavoriteView.as_view(), name='favori-toggle'),
 ]
