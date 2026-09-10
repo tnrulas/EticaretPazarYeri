@@ -13,6 +13,7 @@ import SearchThings from '../src/pages/SearchPage'
 import Categories from '../src/pages/CategoryPage'
 import Order from '../src/pages/OrdersPage'
 import SellerP from '../src/pages/SellerProfilePage'
+import Favorite from '../src/pages/FavoritesPage'
 
 
 
@@ -101,6 +102,12 @@ function App() {
           path='/satici/:id'
           element={
             <SellerP />
+          }
+        />
+        <Route
+          path='/favoriler'
+          element={
+            <Favorite />
           }
         />
       </Routes>

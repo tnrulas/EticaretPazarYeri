@@ -66,6 +66,30 @@ function Navbar() {
                 </div>
                 <div className="offcanvas-body">
 
+                    <div
+                        className="list-group-item list-group-item-action"
+                        onClick={() => {
+                            navigate('/favoriler');
+                            setBurgerOpen(false);
+                        }}
+                        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', color: '#ff4757', fontWeight: 'bold', borderBottom: '2px solid #eee', paddingBottom: '15px', marginBottom: '10px' }}
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            width="20"
+                            height="20"
+                            fill="#ff4757"
+                            stroke="#ff4757"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                        Favorilerim
+                    </div>
+
                     <ul className="list-group list-group-flush">
                         <li onClick={() => handleCategory('Elektronik')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Elektronik</li>
                         <li onClick={() => handleCategory('Moda & Giyim')} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Moda & Giyim</li>
