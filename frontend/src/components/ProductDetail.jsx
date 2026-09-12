@@ -517,11 +517,13 @@ function UrunDetay() {
                             <form className="chat-form"
                                 onSubmit={(e) => {
                                     e.preventDefault();
-                                    if (mesajlar.length === 0 && isSeller === false) {
+                                    if (!mesajlasmaAlaniId && isSeller === false) {
                                         alanolustur(e);
-                                    } else if (mesajlar.length === 0 && isSeller === true) {
-                                        alert("satıcılar müşteri mesajlaşma başlatmadan mesaj gönderemez")
-                                    } else if (mesajlar.length > 0) {
+                                    }
+                                    else if (!mesajlasmaAlaniId && isSeller === true) {
+                                        alert("Satıcılar müşteri mesajlaşma başlatmadan mesaj gönderemez.");
+                                    }
+                                    else {
                                         if (yeniMesaj.trim() === "") {
                                             alert("Mesaj boş bırakılamaz");
                                         } else {

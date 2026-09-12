@@ -116,3 +116,11 @@ class OdaKontrolView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         
         return Response({"detail": "Oda henüz yok"}, status=status.HTTP_404_NOT_FOUND)
+
+class OdaKontrolSaticiView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request): 
+        odalar = MesajlasmaAlani.objects.filter(satici=request.user)
+        serializer = MesajlasmaAlaniSerializer(odalar, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

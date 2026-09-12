@@ -14,6 +14,8 @@ import Categories from '../src/pages/CategoryPage'
 import Order from '../src/pages/OrdersPage'
 import SellerP from '../src/pages/SellerProfilePage'
 import Favorite from '../src/pages/FavoritesPage'
+import MesajArayüz from '../src/pages/MessageAlPage'
+import MesajAlan from '../src/pages/MessageArPage'
 
 
 
@@ -108,6 +110,18 @@ function App() {
           path='/favoriler'
           element={
             <Favorite />
+          }
+        />
+        <Route
+          path='/saticiMesajlar/:id'
+          element={
+            <MesajArayüz />
+          }
+        />
+        <Route
+          path='/saticiMesajAlani/:odaId'
+          element={
+            <MesajAlan />
           }
         />
       </Routes>
