@@ -4,20 +4,20 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import '../style/Productlist.css'
 import api from '../services/api';
 
-function CategoryLists() {
-    const [products, setProducts] = useState([])
+function CategoryLists({ products, setProducts }) {
     const navigate = useNavigate();
 
     const [searchParams] = useSearchParams();
-    const query = searchParams.get('category') || '';
+    const categoryId = searchParams.get('category');
+    const categoryName = searchParams.get('name') || '';
 
     const [favoriler, setFavoriler] = useState([])
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await api.get('urunler/kategori/', {
-                    params: { category: query }
+                const response = await api.get('urunler/tekkategori/', {
+                    params: { category: categoryId }
                 })
                 setProducts(response.data)
             } catch (error) {
@@ -26,7 +26,7 @@ function CategoryLists() {
         }
 
         fetchProducts();
-    }, [query])
+    }, [categoryId])
 
     useEffect(() => {
         const fetchFavorites = async () => {
@@ -59,9 +59,8 @@ function CategoryLists() {
         <div className="catalog">
             <div className="catalog__header">
                 <p className="catalog__eyebrow">Pazar yeri</p>
-                <h1 className="catalog__title">{query ? `${query}` : 'Tüm Kategoriler'}</h1>
+                <h1 className="catalog__title">{categoryName ? `${categoryName}` : 'Tüm Kategoriler'}</h1>
             </div>
-
             {products.length === 0 ? (
                 <p className="catalog__empty">Şu anda listelenecek ürün yok.</p>
             ) : (

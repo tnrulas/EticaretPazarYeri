@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import '../style/Navbar.css'
 import { useState } from 'react';
 import api from '../services/api';
+import '../style/filters.css'
 
 
 function Navbar() {
@@ -12,13 +13,31 @@ function Navbar() {
     const [burgerOpen, setBurgerOpen] = useState(false)
     const [selectedCategory, setSelectedCategory] = useState(null)
     const [user, setUser] = useState(null)
+    const [categorys, setCategorys] = useState([])
+    const [categoryOpen, setCategoryOpen] = useState(false);
+    const [subCategoryOpen, setSubCategoryOpen] = useState(false);
+    const [subOpen, setSubOpen] = useState(null)
 
     const isSeller = localStorage.getItem('is_seller') === 'true';
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await api.get('urunler/kategoriler/')
+                console.log(response.data)
+                setCategorys(response.data)
+            } catch (error) {
+                console.error("kategorileri çekerken bir hata oluştu", error)
+            }
+        }
+        fetchCategories();
+    }, [])
 
     useEffect(() => {
         const fetchUser = async () => {
             try {
                 const response = await api.get('accounts/listele/')
+                console.log('KATEGORİLER:', response.data)
                 setUser(response.data)
             } catch (error) {
                 console.error("KUllanıcı çekilirken bir hata oluştu:", error)
@@ -27,10 +46,10 @@ function Navbar() {
         fetchUser();
     }, [])
 
-    const handleCategory = (category_name) => {
-        setSelectedCategory(category_name);
+    const handleCategory = (category) => {
+        setSelectedCategory(category);
         setBurgerOpen(false);
-        navigate(`/filter?category=${encodeURIComponent(category_name)}`);
+        navigate(`/filter?category=${category.id}&name=${encodeURIComponent(category.name)}`);
     }
 
     const handleSearch = (e) => {
@@ -80,26 +99,41 @@ function Navbar() {
                     </div>
 
                     <ul className="sidebar-menu">
-                        <li onClick={() => handleCategory('Elektronik')} className="sidebar-item">Elektronik</li>
-                        <li onClick={() => handleCategory('Moda & Giyim')} className="sidebar-item">Moda & Giyim</li>
-                        <li onClick={() => handleCategory('Ev, Mobilya & Yaşam')} className="sidebar-item">Ev, Mobilya & Yaşam</li>
-                        <li onClick={() => handleCategory('Kozmetik & Kişisel Bakım')} className="sidebar-item">Kozmetik & Kişisel Bakım</li>
-                        <li onClick={() => handleCategory('Anne, Bebek & Oyuncak')} className="sidebar-item">Anne, Bebek & Oyuncak</li>
-                        <li onClick={() => handleCategory('Spor & Outdoor')} className="sidebar-item">Spor & Outdoor</li>
-                        <li onClick={() => handleCategory('Süpermarket & Gıda')} className="sidebar-item">Süpermarket & Gıda</li>
-                        <li onClick={() => handleCategory('Kitap, Müzik & Hobi')} className="sidebar-item">Kitap, Müzik & Hobi</li>
-                        <li onClick={() => handleCategory('Otomobil & Motosiklet')} className="sidebar-item">Otomobil & Motosiklet</li>
-                        <li onClick={() => handleCategory('Evcil Hayvan Ürünleri')} className="sidebar-item">Evcil Hayvan Ürünleri</li>
-                        <li onClick={() => handleCategory('Ofis & Kırtasiye')} className="sidebar-item">Ofis & Kırtasiye</li>
-                        <li onClick={() => handleCategory('Saat, Takı & Aksesuar')} className="sidebar-item">Saat, Takı & Aksesuar</li>
-                        <li onClick={() => handleCategory('Ayakkabı & Çanta')} className="sidebar-item">Ayakkabı & Çanta</li>
-                        <li onClick={() => handleCategory('Yapı Market & Hırdavat')} className="sidebar-item">Yapı Market & Hırdavat</li>
-                        <li onClick={() => handleCategory('Bahçe & Teras')} className="sidebar-item">Bahçe & Teras</li>
-                        <li onClick={() => handleCategory('Oyun & Konsol')} className="sidebar-item">Oyun & Konsol</li>
-                        <li onClick={() => handleCategory('Sağlık & Medikal Ürünler')} className="sidebar-item">Sağlık & Medikal Ürünler</li>
-                        <li onClick={() => handleCategory('Müzik Aletleri')} className="sidebar-item">Müzik Aletleri</li>
-                        <li onClick={() => handleCategory('Sanat, Hobi & El İşi')} className="sidebar-item">Sanat, Hobi & El İşi</li>
+                        {categorys.map((category) => (
+                            <li key={category.id} className="sidebar-item">
+                                <div onClick={() => setCategoryOpen(categoryOpen === category.id ? null : category.id)}>
+                                    {category.name}
+                                </div>
+
+                                {categoryOpen === category.id && (
+                                    <ul>
+                                        {category.subcategories.map((sub) => (
+                                            <li
+                                                key={sub.id}
+                                                onMouseEnter={() => setSubOpen(sub.id)}
+                                                onMouseLeave={() => setSubOpen(null)}
+                                            >
+                                                <div onClick={() => handleCategory(sub)}>
+                                                    {sub.name}
+                                                </div>
+
+                                                {subOpen === sub.id && sub.subcategories.length > 0 && (
+                                                    <ul>
+                                                        {sub.subcategories.map((alt) => (
+                                                            <li key={alt.id} onClick={() => handleCategory(alt)}>
+                                                                {alt.name}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                )}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </li>
+                        ))}
                     </ul>
+
                 </div>
             </div>
 

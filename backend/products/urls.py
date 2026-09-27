@@ -11,4 +11,7 @@ urlpatterns = [
     path('kategori/', ProductCategoryListView.as_view(), name='urun-kategori'),
     path('satici/<int:seller_id>/', SellerProductListView.as_view()),
     path('urunler/<int:product_id>/oneriler/', ProductSuggestionView.as_view(), name='urun-onerileri'),
+    path('kategoriler/', CategoryTreeListView.as_view(), name='kategori-agaci'),
+    path('tekkategori/', CategoryProductListView.as_view(), name='kategori-urunleri'),
+    path('filtrele/', ProductFilterView.as_view()),
 ]

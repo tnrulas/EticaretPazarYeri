@@ -4,8 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import '../style/Productlist.css'
 import api from '../services/api';
 
-function SearchAll() {
-    const [products, setProducts] = useState([])
+function SearchAll({ products2, setProducts2 }) {
     const navigate = useNavigate();
 
     const [searchParams] = useSearchParams();
@@ -19,7 +18,7 @@ function SearchAll() {
                 const response = await api.get('urunler/ara/', {
                     params: { q: query }
                 })
-                setProducts(response.data)
+                setProducts2(response.data)
             } catch (error) {
                 console.error("Ürünler çekilirken hata oluştu:", error)
             }
@@ -62,11 +61,11 @@ function SearchAll() {
                 <h1 className="catalog__title">Arama sonuçları</h1>
             </div>
 
-            {products.length === 0 ? (
+            {products2.length === 0 ? (
                 <p className="catalog__empty">Şu anda listelenecek ürün yok.</p>
             ) : (
                 <ul className="catalog__grid">
-                    {products.map((product) => {
+                    {products2.map((product) => {
                         const isFavorited = favoriler.includes(product.id);
                         return (
                             <li key={product.id} className="product-card">
