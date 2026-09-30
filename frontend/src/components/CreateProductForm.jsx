@@ -13,6 +13,9 @@ function UrunOlustur() {
     const [urunFiyati, setUrunFiyati] = useState('');
     const [stokSayisi, setStokSayisi] = useState('');
     const [ekstraResim, setEkstraResim] = useState([]);
+    const [varyantVar, setVaryantVar] = useState(false);
+    const [varyantBaslik, setVaryantBaslik] = useState('');
+    const [varyantSecenekler, setVaryantSecenekler] = useState([{ deger: '', stok: '' }]);
 
     const [kategoriler, setKategoriler] = useState([]);
 
@@ -43,10 +46,41 @@ function UrunOlustur() {
         kategorileriGetir();
     }, []);
 
+    const secenekGuncelle = (index, alan, deger) => {
+        setVaryantSecenekler(prev =>
+            prev.map((s, i) => (i === index ? { ...s, [alan]: deger } : s))
+        );
+    };
+
+    const secenekEkle = () => {
+        setVaryantSecenekler(prev => [...prev, { deger: '', stok: '' }]);
+    };
+
+    const secenekSil = (index) => {
+        setVaryantSecenekler(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const varyantToplamStok = varyantSecenekler.reduce((toplam, s) => toplam + (parseInt(s.stok) || 0), 0);
+
     const olustur = async (e) => {
         e.preventDefault();
 
         const nihaiKategoriId = seciliEnAltKategori || seciliAltKategori || seciliAnaKategori;
+
+        if (varyantVar) {
+            if (!varyantBaslik.trim()) {
+                alert("Lütfen varyant başlığını girin (örn: Renk).");
+                return;
+            }
+            if (varyantSecenekler.some(s => !s.deger.trim() || s.stok === '')) {
+                alert("Tüm seçeneklerin adını ve stoğunu doldurun.");
+                return;
+            }
+            if (varyantToplamStok !== parseInt(stokSayisi)) {
+                alert(`Varyant stokları toplamı (${varyantToplamStok}) ürün stoğuna (${stokSayisi}) eşit olmalı.`);
+                return;
+            }
+        }
 
         if (!nihaiKategoriId) {
             alert("Lütfen en az bir kategori seçin.");
@@ -76,6 +110,16 @@ function UrunOlustur() {
             formData.append('is_editor_choice', isEditorChoice);
 
             formData.append('dinamik_ozellikler', JSON.stringify(dinamikDegerler));
+
+            if (varyantVar) {
+                formData.append('varyant', JSON.stringify({
+                    baslik: varyantBaslik.trim(),
+                    secenekler: varyantSecenekler.map(s => ({
+                        deger: s.deger.trim(),
+                        stok: parseInt(s.stok)
+                    }))
+                }));
+            }
 
             if (urunResmi) {
                 formData.append('photo', urunResmi);
@@ -242,33 +286,96 @@ function UrunOlustur() {
                                                 </option>
                                             ))}
                                         </select>
-                                    ) :
-
-                                        ozellik.filtre_tipi === 'boolean' ? (
-                                            <select
-                                                value={dinamikDegerler[ozellik.id] || ''}
-                                                onChange={(e) => setDinamikDegerler(prev => ({ ...prev, [ozellik.id]: e.target.value }))}
-                                                required
-                                            >
-                                                <option value="">Seçiniz</option>
-                                                <option value="Evet">Evet</option>
-                                                <option value="Hayır">Hayır</option>
-                                            </select>
-                                        ) :
-
-                                            (
-                                                <input
-                                                    type="text"
-                                                    value={dinamikDegerler[ozellik.id] || ''}
-                                                    onChange={(e) => setDinamikDegerler(prev => ({ ...prev, [ozellik.id]: e.target.value }))}
-                                                    placeholder={`${ozellik.isim} giriniz...`}
-                                                    required
-                                                />
-                                            )}
+                                    ) : ozellik.filtre_tipi === 'boolean' ? (
+                                        <select
+                                            value={dinamikDegerler[ozellik.id] || ''}
+                                            onChange={(e) => setDinamikDegerler(prev => ({ ...prev, [ozellik.id]: e.target.value }))}
+                                            required
+                                        >
+                                            <option value="">Seçiniz</option>
+                                            <option value="Evet">Evet</option>
+                                            <option value="Hayır">Hayır</option>
+                                        </select>
+                                    ) : (
+                                        <input
+                                            type="text"
+                                            value={dinamikDegerler[ozellik.id] || ''}
+                                            onChange={(e) => setDinamikDegerler(prev => ({ ...prev, [ozellik.id]: e.target.value }))}
+                                            placeholder={`${ozellik.isim} giriniz...`}
+                                            required
+                                        />
+                                    )}
                                 </div>
                             ))}
                         </div>
                     )}
+
+                    <div style={{ marginTop: '20px', padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '600' }}>
+                            <input type="checkbox" checked={varyantVar} onChange={(e) => setVaryantVar(e.target.checked)} />
+                            Bu ürünün varyantları var (renk, beden, hafıza vb.)
+                        </label>
+
+                        {varyantVar && (
+                            <div style={{ marginTop: '15px' }}>
+                                <div className="product-form__field">
+                                    <label>Varyant Başlığı</label>
+                                    <input
+                                        type="text"
+                                        value={varyantBaslik}
+                                        onChange={(e) => setVaryantBaslik(e.target.value)}
+                                        placeholder="Örn: Renk"
+                                    />
+                                </div>
+
+                                <label style={{ display: 'block', margin: '10px 0 8px', fontWeight: '600' }}>Seçenekler</label>
+                                {varyantSecenekler.map((secenek, index) => (
+                                    <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
+                                        <input
+                                            type="text"
+                                            value={secenek.deger}
+                                            onChange={(e) => secenekGuncelle(index, 'deger', e.target.value)}
+                                            placeholder="Örn: Kırmızı"
+                                            style={{ flex: 2 }}
+                                        />
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            value={secenek.stok}
+                                            onChange={(e) => secenekGuncelle(index, 'stok', e.target.value)}
+                                            placeholder="Stok"
+                                            style={{ flex: 1 }}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => secenekSil(index)}
+                                            disabled={varyantSecenekler.length === 1}
+                                            style={{ padding: '0 12px', border: '1px solid #ddd', borderRadius: '6px', background: '#fff', cursor: 'pointer' }}
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
+                                ))}
+
+                                <button
+                                    type="button"
+                                    onClick={secenekEkle}
+                                    style={{ marginTop: '4px', padding: '8px 14px', border: '1px dashed #999', borderRadius: '6px', background: 'transparent', cursor: 'pointer' }}
+                                >
+                                    + Seçenek Ekle
+                                </button>
+
+                                <p style={{
+                                    marginTop: '12px',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    color: varyantToplamStok === parseInt(stokSayisi) ? '#16a34a' : '#dc2626'
+                                }}>
+                                    Varyant toplamı: {varyantToplamStok} / Ürün stoğu: {stokSayisi || 0}
+                                </p>
+                            </div>
+                        )}
+                    </div>
 
                     <div className="product-form__common-filters" style={{ marginTop: '20px', padding: '15px', background: '#f9f9f9', borderRadius: '8px' }}>
                         <h3 style={{ marginBottom: '15px', fontSize: '16px' }}>Ekstra Özellikler</h3>
@@ -303,8 +410,8 @@ function UrunOlustur() {
 
                     <button type="submit" className="product-form__submit" style={{ marginTop: '20px' }}>Ürün Oluştur</button>
                 </form>
-            </div>
-        </div>
+            </div >
+        </div >
     )
 }
 

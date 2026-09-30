@@ -14,4 +14,7 @@ urlpatterns = [
     path('kategoriler/', CategoryTreeListView.as_view(), name='kategori-agaci'),
     path('tekkategori/', CategoryProductListView.as_view(), name='kategori-urunleri'),
     path('filtrele/', ProductFilterView.as_view()),
+    path('yorumlarim/', ProductAllReviewView.as_view(), name='tum-yorumlar'),
+    path('ziyaret/ekle/', VisitedProductAddView.as_view(), name='ziyaret-ekle'),
+    path('ziyaret/liste/', VisitedProductListView.as_view(), name='ziyaret-liste'),
 ]

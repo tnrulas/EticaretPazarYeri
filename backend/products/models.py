@@ -39,6 +39,16 @@ class ProductValue(models.Model):
     def __str__(self):
         return f"{self.product.name} -> {self.attribute.isim}: {self.value}"
 
+class ProductVariant(models.Model):
+    baslik = models.CharField(max_length=100)
+    secenekler = models.JSONField(default=list)
+
+    def toplam_stok(self):
+        return sum(s['stok'] for s in self.secenekler)
+
+    def __str__(self):
+        return f"{self.baslik} ({len(self.secenekler)} seçenek)"
+
 class Product(models.Model):
     seller = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, related_name='products')
     
@@ -66,6 +76,8 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='products')
     brand = models.CharField(max_length=255, blank=True, null=True)
     
+    variantes = models.OneToOneField(ProductVariant, on_delete=models.SET_NULL, null=True, blank=True, related_name='product')
+    
     def __str__(self):
         return f"{self.name} - {self.seller.username}"
 
@@ -83,3 +95,13 @@ class Review(models.Model):
     message = models.TextField(blank=True, null=True)
     rating = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+class VisitedProduct(models.Model):
+    name = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, related_name='ziyaretler')
+    product = models.ForeignKey('products.Product', on_delete=models.CASCADE, related_name='ziyaret_edenler')
+
+    class Meta:
+        unique_together = ('name', 'product')
+
+    def __str__(self):
+        return f"{self.name.username} -> {self.product.name}"

@@ -16,6 +16,7 @@ import SellerP from '../src/pages/SellerProfilePage'
 import Favorite from '../src/pages/FavoritesPage'
 import MesajArayüz from '../src/pages/MessageAlPage'
 import MesajAlan from '../src/pages/MessageArPage'
+import ProfilesP from '../src/pages/ProfilePage'
 
 
 
@@ -122,6 +123,12 @@ function App() {
           path='/saticiMesajAlani/:odaId'
           element={
             <MesajAlan />
+          }
+        />
+        <Route
+          path='/dashboard'
+          element={
+            <ProfilesP />
           }
         />
       </Routes>

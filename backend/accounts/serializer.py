@@ -58,8 +58,8 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
 class ListMyAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'username']
-        extra_kwargs = {'username':{'read_only':True}}
+        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+        read_only_fields = ['username', 'email']
 
 class ListSellerAccountSerializer(serializers.ModelSerializer):
     class Meta:

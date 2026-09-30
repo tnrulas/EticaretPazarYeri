@@ -3,8 +3,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions, status
 
 from accounts.models import CustomUser
-from .models import Product, Review, ImageProduct, Category, CategoryAttribute, ProductValue
-from .serializer import ProductSerializer, ProductReviewSerializer, CategorySerializer, ProductValueSerializer
+from .models import Product, Review, ImageProduct, Category, CategoryAttribute, ProductValue, VisitedProduct
+from .serializer import ProductSerializer, ProductReviewSerializer, CategorySerializer, ProductValueSerializer, VisitedProductSerializer, ProductVariantSerializer
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.exceptions import PermissionDenied
@@ -12,6 +12,7 @@ from orders.models import OrderItem
 import json
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
+from rest_framework.views import APIView
 
 # Create your views here.
 
@@ -53,8 +54,29 @@ class ProductCreateView(generics.CreateAPIView):
         
         if not self.request.user.is_seller:
             raise PermissionDenied("Only sellers can create products.")
+
+        varyant_serializer = None
+        varyant_str = self.request.data.get('varyant')
+        if varyant_str:
+            try:
+                varyant_data = json.loads(varyant_str)
+            except json.JSONDecodeError:
+                raise ValidationError("varyant JSON formatında olmalıdır.")
+
+            varyant_serializer = ProductVariantSerializer(data=varyant_data)
+            varyant_serializer.is_valid(raise_exception=True)
+
+            toplam = sum(s['stok'] for s in varyant_serializer.validated_data['secenekler'])
+            urun_stok = serializer.validated_data['stock_count']
+            if toplam != urun_stok:
+                raise ValidationError(f"Varyant stokları toplamı ({toplam}) ürün stoğuna ({urun_stok}) eşit olmalı.")
         
         product = serializer.save(seller=self.request.user)
+
+        if varyant_serializer:
+            varyant = varyant_serializer.save()
+            product.variantes = varyant
+            product.save()
         
         ekstra_resimler = self.request.FILES.getlist('images')
         
@@ -153,6 +175,13 @@ class ProductReviewView(generics.ListCreateAPIView):
         
         serializer.save(user=user, product=product, is_buyed=is_bought)
 
+class ProductAllReviewView(generics.ListAPIView):
+    serializer_class = ProductReviewSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Review.objects.filter(user=self.request.user).order_by('-created_at')
+
 class ProductSuggestionView(generics.ListAPIView):
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
@@ -229,3 +258,33 @@ class ProductFilterView(generics.ListAPIView):
             urunler = urunler.filter(genel_kosul)
 
         return urunler.distinct()
+
+class VisitedProductAddView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        product_id = request.data.get('product_id')
+        user_id = request.data.get('user_id')
+
+        if str(request.user.id) != str(user_id):
+            raise PermissionDenied("Başka bir kullanıcı adına ziyaret kaydı eklenemez.")
+
+        user = get_object_or_404(CustomUser, id=user_id)
+        product = get_object_or_404(Product, id=product_id)
+
+        _, olusturuldu = VisitedProduct.objects.get_or_create(name=user, product=product)
+        if not olusturuldu:
+            return Response({"mesaj": "Bu ürün zaten ziyaret edilenlerde"}, status=status.HTTP_200_OK)
+
+        if VisitedProduct.objects.filter(name=user).count() > 20:
+            en_eski = VisitedProduct.objects.filter(name=user).order_by('id').first()
+            en_eski.delete()
+
+        return Response({"mesaj": "Ziyaret kaydedildi"}, status=status.HTTP_201_CREATED)
+
+class VisitedProductListView(generics.ListAPIView):
+    serializer_class = VisitedProductSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return VisitedProduct.objects.filter(name=self.request.user).order_by('-id')

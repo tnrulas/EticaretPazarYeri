@@ -40,6 +40,8 @@ function UrunDetay() {
 
     const [onerilenUrunler, setOnerilenUrunler] = useState([]);
 
+    const [secilenSecenek, setSecilenSecenek] = useState(null);
+
     if (token) {
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
@@ -82,8 +84,10 @@ function UrunDetay() {
         const fetchProduct = async () => {
             try {
                 const response = await api.get(`urunler/Urunliste/${id}/`)
+                console.log("VARYANT:", response.data.variantes)
                 setProduct(response.data)
                 setActiveImage(response.data.photo)
+                setSecilenSecenek(null)
             } catch (error) {
                 console.error("Ürün detayları çekilirken hata oluştu:", error)
             }
@@ -120,9 +124,24 @@ function UrunDetay() {
         }
     }
 
+    const varyantKontrol = () => {
+        if (product.variantes && !secilenSecenek) {
+            alert(`Lütfen bir ${product.variantes.baslik.toLocaleLowerCase('tr')} seçin.`);
+            return false;
+        }
+        return true;
+    }
+
     const handleAddToCart = () => {
-        dispatch(addToCart(product));
+        if (!varyantKontrol()) return;
+        dispatch(addToCart({ ...product, secilenVaryant: secilenSecenek }));
         alert(`${product.name} sepete eklendi!`);
+    }
+
+    const handleBuyNow = () => {
+        if (!varyantKontrol()) return;
+        dispatch(addToCart({ ...product, secilenVaryant: secilenSecenek }));
+        navigate('/odeme');
     }
 
     useEffect(() => {
@@ -152,6 +171,22 @@ function UrunDetay() {
         }
         fetchFavorites();
     }, [])
+
+    useEffect(() => {
+        if (!product || !myUserId) return;
+
+        const ziyaretKaydet = async () => {
+            try {
+                await api.post('urunler/ziyaret/ekle/', {
+                    product_id: product.id,
+                    user_id: myUserId
+                });
+            } catch (error) {
+                console.error("Ziyaret kaydedilemedi:", error);
+            }
+        };
+        ziyaretKaydet();
+    }, [product, myUserId]);
 
     const addFavorites = async (id) => {
         try {
@@ -352,10 +387,32 @@ function UrunDetay() {
                             <span className="price-amount">{product.price} ₺</span>
                         </div>
 
+                        {product.variantes && (
+
+                            <div className="variant-box">
+                                <span className="variant-label">
+                                    {product.variantes.baslik}: <strong>{secilenSecenek ? secilenSecenek.deger : 'Seçiniz'}</strong>
+                                </span>
+                                <div className="variant-options">
+                                    {product.variantes.secenekler.map((s) => (
+                                        <button
+                                            key={s.deger}
+                                            type="button"
+                                            className={`variant-option ${secilenSecenek?.deger === s.deger ? 'is-selected' : ''}`}
+                                            disabled={s.stok === 0}
+                                            onClick={() => setSecilenSecenek(s)}
+                                        >
+                                            {s.deger}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         <div className="inventory-stats">
                             <div className="stat-item">
                                 <span className="stat-label">Stok Durumu</span>
-                                <span className="stat-value">{product.stock_count} Adet</span>
+                                <span className="stat-value">{secilenSecenek ? secilenSecenek.stok : product.stock_count} Adet</span>
                             </div>
                             <div className="stat-item">
                                 <span className="stat-label">Toplam Satış</span>
@@ -368,7 +425,10 @@ function UrunDetay() {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                                 Sepete Ekle
                             </button>
-
+                            <button className="btn-add-cart btn-buy-now" onClick={handleBuyNow}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                Satın Al
+                            </button>
                             <button
                                 className={`btn-favorite-large ${isFavorited ? 'is-active' : ''}`}
                                 onClick={(e) => {
