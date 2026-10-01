@@ -3,6 +3,27 @@ import { useEffect, useState } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import api from "../services/api"
 
+const filtreleriBirlestir = (liste) => {
+    const harita = new Map();
+
+    for (const f of liste) {
+        const anahtar = f.isim.trim();
+
+        if (!harita.has(anahtar)) {
+            harita.set(anahtar, { ...f });
+            continue;
+        }
+
+        const mevcut = harita.get(anahtar);
+        if (mevcut.filtre_tipi === 'secim' && f.filtre_tipi === 'secim') {
+            const eski = (mevcut.secenekler || '').split(',').map(s => s.trim()).filter(Boolean);
+            const yeni = (f.secenekler || '').split(',').map(s => s.trim()).filter(Boolean);
+            mevcut.secenekler = [...new Set([...eski, ...yeni])].join(', ');
+        }
+    }
+
+    return [...harita.values()];
+};
 
 function Filter({ products, setProducts }) {
     const [selectedCategory, setSelectedCategory] = useState(null)
@@ -71,8 +92,16 @@ function Filter({ products, setProducts }) {
                 : kat.name.toLocaleLowerCase('tr') === aranan;
 
             if (eslesti) {
+                const altFiltreler = [];
+                const altStack = [...kat.subcategories];
+                while (altStack.length > 0) {
+                    const alt = altStack.pop();
+                    altFiltreler.push(...alt.ozellikler);
+                    altStack.push(...alt.subcategories);
+                }
+
                 setSelectedCategory(kat);
-                setFiltreler(tumFiltreler);
+                setFiltreler(filtreleriBirlestir([...tumFiltreler, ...altFiltreler]));
                 return;
             }
 
